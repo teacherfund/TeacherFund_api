@@ -1,4 +1,4 @@
-import { Frequency } from '../@types/frequency'
+import { Frequency } from '../@types/donations'
 const bcrypt = require('bcrypt')
 const helper = require('../helper')
 
@@ -8,6 +8,10 @@ module.exports = (sequelize: any, DataTypes: any) => {
       type: DataTypes.INTEGER,
       autoIncrement: true,
       primaryKey: true
+    },
+    ammount: {
+      type: DataTypes.INTEGER,
+      defaultValue: 0
     },
     frequency: {
       type: DataTypes.STRING,
@@ -27,5 +31,8 @@ module.exports = (sequelize: any, DataTypes: any) => {
   }, {
     freezeTableName: true
   })
+  Donation.associate = (db: Database) => {
+    Donation.hasOne(db.getModel('User'), { foreignKey: 'user_id' })
+  }
   return Donation
 }

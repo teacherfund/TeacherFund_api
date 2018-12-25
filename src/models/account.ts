@@ -25,6 +25,9 @@ module.exports = (sequelize: any, DataTypes: any) => {
       type: DataTypes.STRING,
       required: true
     },
+    role: {
+      type: DataTypes.STRING
+    },
     createdAt: {
       type: DataTypes.DATE,
       defaultValue: DataTypes.NOW

@@ -26,6 +26,10 @@ class Database {
   getModel (modelName: string) {
     return this.models[modelName]
   }
+
+  getModels () {
+    return this.models
+  }
 }
 
 const connection = new Sequelize(database, username, password, {
@@ -48,7 +52,7 @@ fs.readdirSync(__dirname).filter((file: any) => {
   db.addModel(model)
 })
 
-Object.keys(db).forEach((modelName) => {
+Object.keys(db.getModels()).forEach((modelName) => {
   if ('associate' in db.getModel(modelName)) {
     db.getModel(modelName).associate(db)
   }
