@@ -60,8 +60,11 @@
   "dependencies": {
     "@types/koa": "^2.0.47",
     "@types/koa-router": "^7.0.35",
+    "@types/node": "^7.0.5",
+    "bcrypt": "^3.0.3",
     "koa": "^2.6.2",
     "koa-router": "^7.4.0",
+    "sequelize": "^4.42.0",
     "sodium-native": "^2.2.3"
   }
 }
