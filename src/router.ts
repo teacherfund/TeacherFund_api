@@ -7,6 +7,6 @@ const router = new Router()
 router.get('/alive', controllers.general.alive)
 
 // Account routes
-router.post('/account/reset', controllers.account.requestReset)
+router.post('/account/reset/request', controllers.account.requestReset)
 
 export default router
