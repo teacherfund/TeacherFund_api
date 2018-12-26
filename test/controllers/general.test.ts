@@ -1,4 +1,4 @@
-import anyTest, {TestInterface} from 'ava'
+import anyTest, { TestInterface } from 'ava'
 import { BaseContext } from 'koa'
 import general from '../../src/controllers/general'
 
@@ -11,4 +11,5 @@ test.beforeEach((t) => {
 test('alive endpoint', async (t) => {
   general.alive(t.context.ctx)
   t.deepEqual(t.context.ctx.status, 200)
+  t.deepEqual(t.context.ctx.body, { ok: true })
 })

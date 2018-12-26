@@ -1,8 +1,11 @@
 import { BaseContext } from 'koa'
 import sodium from 'sodium-native'
+// import assert from 'http-assert'
 
-export default {
-  requestReset: async (ctx: BaseContext) => {
+export default class AccountController {
+  public static async requestReset (ctx: BaseContext) {
+    // const { email } = ctx.request.body
+    // assert.ok(email, 400)
     // see if email address is in DB, if not: bail
     // generate 16 random bytes as the selector
     // generate 16 random bytes as the verifier - hash it
@@ -15,16 +18,23 @@ export default {
     // TODO store selector in DB along with hash(verifier)
     const token = Buffer.concat([selector, verifierHash]).toString('base64')
     // TODO email token to user
-    ctx.status = 200
-    // returning these for now but not in the future
-    ctx.body = {
+    ctx.log.info({
       selector,
       verifier,
       verifierHash,
       token
-    }
-  },
-  receiveReset: async (ctx: BaseContext) => {
+    })
+    ctx.status = 200
+    ctx.body = { ok: true }
+  }
+  public static async receiveReset (ctx: BaseContext) {
+    const { token } = ctx.request.body
+    // assert.ok(token, 400)
+    const tokenBuf = Buffer.from(token, 'base64')
+    const selector = tokenBuf.slice(0, 16)
+    const verifierHash = tokenBuf.slice(16)
+    ctx.log.info({ selector })
+    ctx.log.info({ verifierHash })
     // DB lookup first 16 bytes provided (selector)
     // if found, hash next 16 bytes provided (verifier)
     // compare hash with verifier hash in DB
@@ -32,6 +42,10 @@ export default {
     // if hash does not match, 401 and delete token
 
     // if match and hasn't expired, reset the password
+    return AccountController.resetPassword(ctx)
+  }
+  public static async resetPassword (ctx: BaseContext) {
     ctx.status = 200
+    ctx.body = { ok: true }
   }
 }
