@@ -1,3 +1,4 @@
+import { UserAccount } from '../@types/account'
 const bcrypt = require('bcrypt')
 const helper = require('../helper')
 
@@ -42,22 +43,22 @@ module.exports = (sequelize: any, DataTypes: any) => {
   }, {
     freezeTableName: true,
     hooks: {
-      beforeCreate: (account: any, options: any) => {
+      beforeCreate: (account: UserAccount) => {
         return bcrypt.hash(account.password, 10)
-          .then((encryptedPassword: any) => {
+          .then((encryptedPassword: string) => {
             account.password = encryptedPassword
           })
           .catch((err: any) => {
             return Promise.reject(err)
           })
       },
-      beforeUpdate: (account: any, options: any) => {
+      beforeUpdate: (account: any) => {
         if (!account.changed('password')) {
           return
         }
 
         return bcrypt.hash(account.password, 10)
-          .then((encryptedPassword: any) => {
+          .then((encryptedPassword: string) => {
             account.password = encryptedPassword
           })
           .catch((err: any) => {
@@ -70,7 +71,7 @@ module.exports = (sequelize: any, DataTypes: any) => {
   Account.authenticate = (body: any) => {
     let account: any
     return Account.findOne({ where: { email: body.email } })
-      .then((localAccount: any) => {
+      .then((localAccount: UserAccount) => {
         if (!localAccount) return Promise.reject(new helper.CustomError(helper.strings.sorryWeCantFindEmail))
         account = localAccount
         return bcrypt.compare(body.password, account.password)

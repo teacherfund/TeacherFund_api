@@ -5,14 +5,11 @@ module.exports = (sequelize: any, DataTypes: any) => {
       autoIncrement: true,
       primaryKey: true
     },
-    ammount: {
+    amount: {
       type: DataTypes.INTEGER,
       defaultValue: 0
     },
     description: {
-      type: DataTypes.STRING
-    },
-    locations: {
       type: DataTypes.STRING
     },
     pictures: {

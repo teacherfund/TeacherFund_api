@@ -1,13 +1,9 @@
 module.exports = (sequelize: any, DataTypes: any) => {
-  const Payment = sequelize.define('Payment', {
+  const Picture = sequelize.define('Picture', {
     id: {
       type: DataTypes.INTEGER,
       autoIncrement: true,
       primaryKey: true
-    },
-    amount: {
-      type: DataTypes.INTEGER,
-      defaultValue: 0
     },
     createdAt: {
       type: DataTypes.DATE,
@@ -23,9 +19,9 @@ module.exports = (sequelize: any, DataTypes: any) => {
   }, {
     freezeTableName: true
   })
-  Payment.associate = (db: Database) => {
-    Payment.hasOne(db.getModel('User'), { foreignKey: 'user_id' })
-    Payment.hasMany(db.getModel('Picture'), { as: 'pictures' })
+  Picture.associate = (db: Database) => {
+    // link to payout
+    Picture.hasOne(db.getModel('Payout'), { foreignKey: 'payout_id' })
   }
-  return Payment
+  return Picture
 }

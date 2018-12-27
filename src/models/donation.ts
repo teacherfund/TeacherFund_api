@@ -1,4 +1,4 @@
-import { Frequency } from '../@types/donations'
+import { Frequency, Donation } from '../@types/donation'
 const bcrypt = require('bcrypt')
 const helper = require('../helper')
 
@@ -9,7 +9,7 @@ module.exports = (sequelize: any, DataTypes: any) => {
       autoIncrement: true,
       primaryKey: true
     },
-    ammount: {
+    amount: {
       type: DataTypes.INTEGER,
       defaultValue: 0
     },
