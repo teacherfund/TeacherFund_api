@@ -1,11 +1,10 @@
 import { BaseContext } from 'koa'
 import sodium from 'sodium-native'
-// import assert from 'http-assert'
 
 export default class AccountController {
   public static async requestReset (ctx: BaseContext) {
-    // const { email } = ctx.request.body
-    // assert.ok(email, 400)
+    const { email } = ctx.request.body
+    ctx.assert(email, 400)
     // see if email address is in DB, if not: bail
     // generate 16 random bytes as the selector
     // generate 16 random bytes as the verifier - hash it
@@ -17,19 +16,14 @@ export default class AccountController {
     sodium.crypto_generichash(verifierHash, verifier)
     // TODO store selector in DB along with hash(verifier)
     const token = Buffer.concat([selector, verifierHash]).toString('base64')
-    // TODO email token to user
-    ctx.log.info({
-      selector,
-      verifier,
-      verifierHash,
-      token
-    })
+    // TODO email token to user and comment out next line
+    ctx.log.info({ token })
     ctx.status = 200
     ctx.body = { ok: true }
   }
   public static async receiveReset (ctx: BaseContext) {
     const { token } = ctx.request.body
-    // assert.ok(token, 400)
+    ctx.assert(token, 400)
     const tokenBuf = Buffer.from(token, 'base64')
     const selector = tokenBuf.slice(0, 16)
     const verifierHash = tokenBuf.slice(16)
