@@ -1,8 +1,6 @@
-import { Frequency, Donation } from '../@types/donation'
-const bcrypt = require('bcrypt')
-const helper = require('../helper')
+import { Frequency } from '../@types/donation'
 
-module.exports = (sequelize: any, DataTypes: any) => {
+export default (sequelize: any, DataTypes: any) => {
   const Donation = sequelize.define('Donation', {
     id: {
       type: DataTypes.INTEGER,
@@ -31,8 +29,8 @@ module.exports = (sequelize: any, DataTypes: any) => {
   }, {
     freezeTableName: true
   })
-  Donation.associate = (db: Database) => {
-    Donation.hasOne(db.getModel('User'), { foreignKey: 'user_id' })
+  Donation.associate = (db: any) => {
+    Donation.hasOne(db.User, { foreignKey: 'user_id' })
   }
   return Donation
 }

@@ -7,31 +7,6 @@ const username = (typeof process.env.MYSQL_USERNAME === 'undefined') ? 'root' : 
 const password = (typeof process.env.MYSQL_PASSWORD === 'undefined') ? '' : process.env.MYSQL_PASSWORD
 const database = (typeof process.env.MYSQL_DB === 'undefined') ? 'teacherfund' : process.env.MYSQL_DB
 
-class Database {
-  private models:{[index: string]: any} = {}
-  connection: any = {}
-  sequelize: any = {}
-  constructor (
-    sequelize: any,
-    connection: any
-  ) {
-    this.sequelize = sequelize
-    this.connection = connection
-  }
-
-  addModel (model: any) {
-    this.models[model.name] = model
-  }
-
-  getModel (modelName: string) {
-    return this.models[modelName]
-  }
-
-  getModels () {
-    return this.models
-  }
-}
-
 const connection = new Sequelize(database, username, password, {
   host,
   dialect: 'mysql',
@@ -42,20 +17,23 @@ const connection = new Sequelize(database, username, password, {
   logging: process.env.NODE_ENV === 'production' ? false : console.log,
   pool: { max: 5, min: 0, idle: 10000 }
 })
-
-const db = new Database(Sequelize, connection)
+let db: {[index: string]: any} = {}
 
 fs.readdirSync(__dirname).filter((file: any) => {
-  return (file.indexOf('.') !== 0) && (file !== 'index.js')
+  // bunch of garbage checks because of typescript compiled files
+  return (file.indexOf('.') !== 0) && (!file.includes('index') && !file.includes('.map') && !file.includes('.ts'))
 }).forEach((file: any) => {
   let model = connection.import(path.join(__dirname, file))
-  db.addModel(model)
+  db[model.name] = model
 })
 
-Object.keys(db.getModels()).forEach((modelName) => {
-  if ('associate' in db.getModel(modelName)) {
-    db.getModel(modelName).associate(db)
+Object.keys(db).forEach((modelName) => {
+  if ('associate' in db[modelName]) {
+    db[modelName].associate(db)
   }
 })
+
+db.sequelize = connection
+db.Sequelize = Sequelize
 
 module.exports = db

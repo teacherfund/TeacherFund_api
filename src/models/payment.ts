@@ -1,4 +1,4 @@
-module.exports = (sequelize: any, DataTypes: any) => {
+export default (sequelize: any, DataTypes: any) => {
   const Payment = sequelize.define('Payment', {
     id: {
       type: DataTypes.INTEGER,
@@ -23,9 +23,9 @@ module.exports = (sequelize: any, DataTypes: any) => {
   }, {
     freezeTableName: true
   })
-  Payment.associate = (db: Database) => {
-    Payment.hasOne(db.getModel('User'), { foreignKey: 'user_id' })
-    Payment.hasMany(db.getModel('Picture'), { as: 'pictures' })
+  Payment.associate = (db: any) => {
+    Payment.hasOne(db.User, { foreignKey: 'user_id' })
+    Payment.hasMany(db.Picture, { as: 'pictures' })
   }
   return Payment
 }

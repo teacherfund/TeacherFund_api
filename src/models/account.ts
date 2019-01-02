@@ -1,8 +1,8 @@
 import { UserAccount } from '../@types/account'
 const bcrypt = require('bcrypt')
-const helper = require('../helper')
+const helper = require('../helpers')
 
-module.exports = (sequelize: any, DataTypes: any) => {
+export default (sequelize: any, DataTypes: any) => {
   const Account = sequelize.define('Account', {
     id: {
       type: DataTypes.INTEGER,

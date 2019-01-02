@@ -1,4 +1,4 @@
-module.exports = (sequelize: any, DataTypes: any) => {
+export default (sequelize: any, DataTypes: any) => {
   const Picture = sequelize.define('Picture', {
     id: {
       type: DataTypes.INTEGER,
@@ -19,9 +19,9 @@ module.exports = (sequelize: any, DataTypes: any) => {
   }, {
     freezeTableName: true
   })
-  Picture.associate = (db: Database) => {
+  Picture.associate = (db: any) => {
     // link to payout
-    Picture.hasOne(db.getModel('Payout'), { foreignKey: 'payout_id' })
+    Picture.hasOne(db.Payout, { foreignKey: 'payout_id' })
   }
   return Picture
 }

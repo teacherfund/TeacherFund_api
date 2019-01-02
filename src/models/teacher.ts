@@ -1,4 +1,4 @@
-module.exports = (sequelize: any, DataTypes: any) => {
+export default (sequelize: any, DataTypes: any) => {
   const Teacher = sequelize.define('Teacher', {
     id: {
       type: DataTypes.INTEGER,
@@ -31,8 +31,8 @@ module.exports = (sequelize: any, DataTypes: any) => {
   }, {
     freezeTableName: true
   })
-  Teacher.associate = (db: Database) => {
-    Teacher.hasOne(db.getModel('School'), { foreignKey: 'school_id' })
+  Teacher.associate = (db: any) => {
+    Teacher.hasOne(db.School, { foreignKey: 'school_id' })
   }
   return Teacher
 }

@@ -1,4 +1,4 @@
-module.exports = (sequelize: any, DataTypes: any) => {
+export default (sequelize: any, DataTypes: any) => {
   const Payout = sequelize.define('Payout', {
     id: {
       type: DataTypes.INTEGER,
@@ -29,10 +29,10 @@ module.exports = (sequelize: any, DataTypes: any) => {
   }, {
     freezeTableName: true
   })
-  Payout.associate = (db: Database) => {
+  Payout.associate = (db: any) => {
     // link to teacher account and school
-    Payout.hasOne(db.getModel('Account'), { foreignKey: 'account_id' })
-    Payout.hasOne(db.getModel('School'), { foreignKey: 'school_id' })
+    Payout.hasOne(db.Account, { foreignKey: 'account_id' })
+    Payout.hasOne(db.School, { foreignKey: 'school_id' })
   }
   return Payout
 }
