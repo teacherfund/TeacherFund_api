@@ -72,12 +72,12 @@ export default (sequelize: any, DataTypes: any) => {
     let account: any
     return Account.findOne({ where: { email: body.email } })
       .then((localAccount: UserAccount) => {
-        if (!localAccount) return Promise.reject(new helper.CustomError(helper.strings.sorryWeCantFindEmail))
+        if (!localAccount) return Promise.reject(new helper.CustomError(helper.strings.InvalidUsernamePassword))
         account = localAccount
         return bcrypt.compare(body.password, account.password)
       })
       .then((result: any) => {
-        if (!result) return Promise.reject(new helper.CustomError(helper.strings.passwordInvalid))
+        if (!result) return Promise.reject(new helper.CustomError(helper.strings.InvalidUsernamePassword))
         return Promise.resolve(account)
       })
       .catch((err: any) => {

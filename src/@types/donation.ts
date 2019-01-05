@@ -6,7 +6,7 @@ export interface Donation {
 }
 
 export enum Frequency {
-  Monthly = 'monthly',
-  biannual = 'biannual',
-  annual = 'annual',
+  Monthly = 'Monthly',
+  Biannual = 'Biannual',
+  Annual = 'Annual',
 }

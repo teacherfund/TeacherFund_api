@@ -4,8 +4,6 @@ import * as teacherController from './teacher'
 import {Teacher} from '../../@types/teacher'
 
 export default class TeacherController {
-  constructor() {}
-
   public async createTeacher(ctx: BaseContext) {
     const { email, firstName, lastName } = ctx.request.body
     ctx.assert(email, 400, Strings.EmailIsRequired)
@@ -37,7 +35,7 @@ export default class TeacherController {
   public async getAllTeachers(ctx: BaseContext) {
     const teachers: Teacher[] = await teacherController.getAllTeachers()
     ctx.status = 200
-    ctx.body = { ok: true }
+    ctx.body = { ok: true, teachers }
   }
 
   public async updateTeacher(ctx: BaseContext) {
