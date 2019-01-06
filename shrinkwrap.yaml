@@ -6,6 +6,7 @@ dependencies:
   koa-pino-logger: 2.1.3
   koa-router: 7.4.0
   koa-sslify: 2.2.0
+  sinon: 7.2.2
   sodium-native: 2.2.3
 devDependencies:
   '@types/koa': 2.0.47
@@ -14,6 +15,7 @@ devDependencies:
   '@types/koa-router': 7.0.35
   '@types/koa-sslify': 2.1.0
   '@types/node': 10.12.18
+  '@types/sinon': 7.0.3
   ava: 1.0.1
   concurrently: 4.1.0
   eslint: 5.11.0
@@ -374,6 +376,26 @@ packages:
       node: '>=6.12.3 <7 || >=8.9.4 <9 || >=10.0.0'
     resolution:
       integrity: sha512-huLSkUuM2/P+U0uy2WwlKuixMsTODD8p4JVQBI4VKeopkiN0C7M3N9XYVawb4M+4spN5RrO/eLhk7KoQX6nsfA==
+  /@sinonjs/commons/1.3.0:
+    dependencies:
+      type-detect: 4.0.8
+    dev: false
+    resolution:
+      integrity: sha512-j4ZwhaHmwsCb4DlDOIWnI5YyKDNMoNThsmwEpfHx6a1EpsGZ9qYLxP++LMlmBRjtGptGHFsGItJ768snllFWpA==
+  /@sinonjs/formatio/3.1.0:
+    dependencies:
+      '@sinonjs/samsam': 3.0.2
+    dev: false
+    resolution:
+      integrity: sha512-ZAR2bPHOl4Xg6eklUGpsdiIJ4+J1SNag1DHHrG/73Uz/nVwXqjgUtRPLoS+aVyieN9cSbc0E4LsU984tWcDyNg==
+  /@sinonjs/samsam/3.0.2:
+    dependencies:
+      '@sinonjs/commons': 1.3.0
+      array-from: 2.1.1
+      lodash.get: 4.4.2
+    dev: false
+    resolution:
+      integrity: sha512-m08g4CS3J6lwRQk1pj1EO+KEVWbrbXsmi9Pw0ySmrIbcVxVaedoFgLvFsV8wHLwh01EpROVz3KvVcD1Jmks9FQ==
   /@types/accepts/1.3.5:
     dependencies:
       '@types/node': 10.12.18
@@ -495,6 +517,10 @@ packages:
       '@types/mime': 2.0.0
     resolution:
       integrity: sha512-/BZ4QRLpH/bNYgZgwhKEh+5AsboDBcUdlBYgzoLX0fpj3Y2gp6EApyOlM3bK53wQS/OE1SrdSYBAbux2D1528Q==
+  /@types/sinon/7.0.3:
+    dev: true
+    resolution:
+      integrity: sha512-cjmJQLx2B5Hp9SzO7rdSivipo3kBqRqeYkTW17nLST1tn5YLWBjTdnzdmeTJXA1+KrrBLsEuvKQ0fUPGrfazQg==
   /@types/sonic-boom/0.6.1:
     dependencies:
       '@types/node': 10.12.18
@@ -634,6 +660,10 @@ packages:
       node: '>=0.10.0'
     resolution:
       integrity: sha1-3wEKoSh+Fku9pvlyOwqWoexBh6E=
+  /array-from/2.1.1:
+    dev: false
+    resolution:
+      integrity: sha1-z+nYwmYoudxa7MYqn12PHzUsEZU=
   /array-union/1.0.2:
     dependencies:
       array-uniq: 1.0.3
@@ -1461,7 +1491,6 @@ packages:
     resolution:
       integrity: sha1-l4hXRCxEdJ5CBmE+N5RiBYJqvYA=
   /diff/3.5.0:
-    dev: true
     engines:
       node: '>=0.3.1'
     resolution:
@@ -2810,6 +2839,10 @@ packages:
     hasBin: true
     resolution:
       integrity: sha512-8Mh9h6xViijj36g7Dxi+Y4S6hNGV96vcJZr/SrlHh1LR/pEn/8j/+qIBbs44YKl69Lrfctp4QD+AdWLTMqEZAQ==
+  /just-extend/4.0.2:
+    dev: false
+    resolution:
+      integrity: sha512-FrLwOgm+iXrPV+5zDU6Jqu4gCRXbWEQg2O3SKONsWE4w7AXFRkryS53bpWdaL9cNol+AmR3AEYz6kn+o0fCPnw==
   /keygrip/1.0.3:
     dev: false
     engines:
@@ -3039,6 +3072,10 @@ packages:
     dev: true
     resolution:
       integrity: sha1-+wMJF/hqMTTlvJvsDWngAT3f7bI=
+  /lodash.get/4.4.2:
+    dev: false
+    resolution:
+      integrity: sha1-LRd/ZS+jHpObRDjVNBSZ36OCXpk=
   /lodash.islength/4.0.1:
     dev: true
     resolution:
@@ -3063,6 +3100,14 @@ packages:
       node: '>=4'
     resolution:
       integrity: sha512-VeIAFslyIerEJLXHziedo2basKbMKtTw3vfn5IzG0XTjhAVEJyNHnL2p7vc+wBDSdQuUpNw3M2u6xb9QsAY5Eg==
+  /lolex/2.7.5:
+    dev: false
+    resolution:
+      integrity: sha512-l9x0+1offnKKIzYVjyXU2SiwhXDLekRzKyhnbyldPHvC7BvLPVpdNUNR2KeMAiCN2D/kLNttZgQD5WjSxuBx3Q==
+  /lolex/3.0.0:
+    dev: false
+    resolution:
+      integrity: sha512-hcnW80h3j2lbUfFdMArd5UPA/vxZJ+G8vobd+wg3nVEQA0EigStbYcrG030FJxL6xiDDPEkoMatV9xIh5OecQQ==
   /loud-rejection/1.6.0:
     dependencies:
       currently-unhandled: 0.4.1
@@ -3330,6 +3375,16 @@ packages:
     dev: true
     resolution:
       integrity: sha512-1nh45deeb5olNY7eX82BkPO7SSxR5SSYJiPTrTdFUVYwAl8CKMA5N9PjTYkHiRjisVcxcQ1HXdLhx2qxxJzLNQ==
+  /nise/1.4.8:
+    dependencies:
+      '@sinonjs/formatio': 3.1.0
+      just-extend: 4.0.2
+      lolex: 2.7.5
+      path-to-regexp: 1.7.0
+      text-encoding: 0.6.4
+    dev: false
+    resolution:
+      integrity: sha512-kGASVhuL4tlAV0tvA34yJYZIVihrUt/5bDwpp4tTluigxUr2bBlJeDXmivb6NuEdFkqvdv/Ybb9dm16PSKUhtw==
   /nocache/2.0.0:
     dev: false
     resolution:
@@ -4307,6 +4362,18 @@ packages:
     dev: true
     resolution:
       integrity: sha1-tf3AjxKH6hF4Yo5BXiUTK3NkbG0=
+  /sinon/7.2.2:
+    dependencies:
+      '@sinonjs/commons': 1.3.0
+      '@sinonjs/formatio': 3.1.0
+      '@sinonjs/samsam': 3.0.2
+      diff: 3.5.0
+      lolex: 3.0.0
+      nise: 1.4.8
+      supports-color: 5.5.0
+    dev: false
+    resolution:
+      integrity: sha512-WLagdMHiEsrRmee3jr6IIDntOF4kbI6N2pfbi8wkv50qaUQcBglkzkjtoOEbeJ2vf1EsrHhLI+5Ny8//WHdMoA==
   /slash/1.0.0:
     dev: true
     engines:
@@ -4631,6 +4698,11 @@ packages:
       node: '>=4'
     resolution:
       integrity: sha1-RYuDiH8oj8Vtb/+/rSYuJmOO+mk=
+  /text-encoding/0.6.4:
+    deprecated: no longer maintained
+    dev: false
+    resolution:
+      integrity: sha1-45mpgiV6J22uQou5KEXLcb3CbRk=
   /text-table/0.2.0:
     dev: true
     resolution:
@@ -4764,6 +4836,12 @@ packages:
       node: '>= 0.8.0'
     resolution:
       integrity: sha1-WITKtRLPHTVeP7eE8wgEsrUg23I=
+  /type-detect/4.0.8:
+    dev: false
+    engines:
+      node: '>=4'
+    resolution:
+      integrity: sha512-0fr/mIH1dlO+x7TlcMy+bIDqKPsw/70tVyeHW787goQjhmqaZe10uwLujubK9q9Lg6Fiho1KUKDYz0Z7k7g5/g==
   /type-is/1.6.16:
     dependencies:
       media-typer: 0.3.0
@@ -5097,6 +5175,7 @@ specifiers:
   '@types/koa-router': ^7.0.35
   '@types/koa-sslify': ^2.1.0
   '@types/node': ^10.12.18
+  '@types/sinon': ^7.0.3
   ava: ^1.0.1
   concurrently: ^4.1.0
   eslint: ^5.10.0
@@ -5117,6 +5196,7 @@ specifiers:
   nodemon: ^1.18.9
   nyc: ^13.1.0
   pino-pretty: ^2.5.0
+  sinon: ^7.2.2
   sodium-native: ^2.2.3
   ts-node: ^7.0.1
   typescript: ~3.1.1
