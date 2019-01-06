@@ -14,4 +14,7 @@ router.post('/account/reset/receive', controllers.account.receiveReset)
 // reset a password
 router.post('/account/reset', controllers.account.resetPassword)
 
+/* Teacher routes */
+
+
 export default router
