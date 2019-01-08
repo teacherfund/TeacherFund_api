@@ -1,7 +1,8 @@
 export interface Payout {
   id: number,
   amount: number,
+  teacherId: number,
   description: string,
-  location: string,
-  meta: any
+  location: string, // lat long for snapmap
+  meta: {}
 }
