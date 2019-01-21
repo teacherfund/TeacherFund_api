@@ -6,10 +6,10 @@ import {School} from '../../@types/school'
 export default class SchoolController {
   public async createSchool(ctx: BaseContext) {
     const { streetAddress, city, state, zip, schoolCode } = ctx.request.body
-    ctx.assert(streetAddress, 400, Strings.UserIdIsRequired)
-    ctx.assert(city, 400, Strings.AmountIsRequired)
-    ctx.assert(state, 400, Strings.FrequencyIsRequired)
-    ctx.assert(schoolCode, 400, Strings.FrequencyIsRequired)
+    ctx.assert(streetAddress, 400, Strings.StreetAddressIsRequired)
+    ctx.assert(city, 400, Strings.CityIsRequired)
+    ctx.assert(state, 400, Strings.StateIsRequired)
+    ctx.assert(schoolCode, 400, Strings.SchoolCodeIsRequired)
 
     const createSchoolBody: schoolController.CreateSchoolBody = {
       streetAddress,
