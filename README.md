@@ -1,9 +1,9 @@
 # teacherfund api
 
 ## Set up database
-`mysql.server start`
-`mysql -u root`
-`create database teacherfund;`
+`mysql.server start`\n
+`mysql -u root`\n
+`create database teacherfund;`\n
 `exit`
 
 ## Run
