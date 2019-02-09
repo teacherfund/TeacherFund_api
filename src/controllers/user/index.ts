@@ -4,16 +4,14 @@ import * as userController from './user'
 import {User} from '../../@types/user'
 
 export default class UserController {
-  public async createUser(ctx: BaseContext) {
-    const { email, firstName, lastName } = ctx.request.body
+  public static async createUser(ctx: BaseContext) {
+    const { email } = ctx.request.body
     ctx.assert(email, 400, Strings.EmailIsRequired)
-    ctx.assert(firstName, 400, Strings.FirstNameIsRequired)
-    ctx.assert(lastName, 400, Strings.LastNameIsRequired)
 
     const createUserBody: userController.CreateUserBody = {
       email,
-      firstName,
-      lastName,
+      firstName: ctx.request.body.firstName,
+      lastName: ctx.request.body.lastName,
       meta: ctx.request.body.meta
     }
 

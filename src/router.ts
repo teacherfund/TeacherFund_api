@@ -15,6 +15,7 @@ router.post('/account/reset/receive', controllers.account.receiveReset)
 router.post('/account/reset', controllers.account.resetPassword)
 
 /* Teacher routes */
+router.post('/donate', controllers.donation.createDonation)
 
 
 export default router
