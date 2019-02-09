@@ -7,3 +7,12 @@ export interface UserAccount {
   role: string,
   meta: any,
 }
+
+export interface CreateAccountBody {
+  email: string,
+  password: string,
+  firstName: string,
+  lastName: string,
+  role: string,
+  meta?: any
+}

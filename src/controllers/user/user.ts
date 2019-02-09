@@ -3,9 +3,9 @@ import {User} from '../../@types/user'
 
 export interface CreateUserBody {
   email: string,
-  firstName: string,
-  lastName: string,
-  meta: any
+  firstName?: string,
+  lastName?: string,
+  meta?: any
 }
 
 export interface UpdateUserBody {

@@ -69,6 +69,7 @@
   },
   "dependencies": {
     "bcrypt": "^3.0.3",
+    "dotenv": "^6.2.0",
     "koa": "^2.6.2",
     "koa-bodyparser": "^4.2.1",
     "koa-helmet": "^4.0.0",
@@ -78,6 +79,7 @@
     "mysql": "^2.16.0",
     "mysql2": "^1.6.4",
     "sequelize": "^4.42.0",
-    "sodium-native": "^2.2.3"
+    "sodium-native": "^2.2.3",
+    "stripe": "^6.23.1"
   }
 }

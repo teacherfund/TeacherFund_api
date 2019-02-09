@@ -1,7 +1,7 @@
 import test from 'ava'
 import sinon from 'sinon'
 import sodium from 'sodium-native'
-import Account from '../../../src/controllers/account/account'
+import * as Account from '../../../src/controllers/account/account'
 
 test('generate reset token makes a reset token', async (t) => {
   let stub = sinon.stub(sodium, 'randombytes_buf')
