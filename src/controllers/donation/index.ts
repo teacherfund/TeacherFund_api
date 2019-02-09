@@ -1,8 +1,10 @@
 import {BaseContext} from 'koa'
 import * as Strings from '../../helpers/strings'
 import * as donationController from './donation'
+import * as accountController from '../account/account'
 import * as userController from '../user/user'
 import {Donation} from '../../@types/donation'
+import {CreateAccountBody, UserAccount} from '../../@types/account'
 import {User} from '../../@types/user'
 import user from '../../models/user';
 const config = require('../../../config')
@@ -45,17 +47,47 @@ export default class DonationController {
     }
 
     if (frequency === 'month') {
+      // if recurring - make them create an account? do we have passwords? talk to pete
+      // redirect to sign in page with amount of donation in URL so we dont need redux 
 
-    // if recurring - make them create an account? do we have passwords? talk to pete
-    // redirect to sign in page with amount of donation in URL so we dont need redux 
+      // create an account in backend
+      const createAccountBody: CreateAccountBody = {
+        email,
+        firstName: ctx.request.body.firstName,
+        lastName: ctx.request.body.lastName,
+        password: ctx.request.body.password,
+        role: 'donor'
+      }
+      
+      const account: UserAccount = await accountController.createNewAccount(createAccountBody)
+      userId = account.id
 
-    // create an account in backend
+      // create a customer in stripe from this account info 
+      const customer = await stripe.customers.create({
+        email,
+        metadata: meta,
+        source: source.id
+      })
 
-    // create a customer in stripe from this account info 
+      // create the plan according to how much they want to monthly donate 
+      const plan = stripe.plans.create({
+        amount,
+        interval: "month",
+        product: {
+          name: "Teacherfund donation"
+        },
+        currency: "usd",
+      })
 
-    // create the plan according to how much they want to monthly donate 
-
-    // create a subscription with the plan ID and the customer ID 
+      // create a subscription with the plan ID and the customer ID
+      const subscription = await stripe.subscriptions.create({
+        customer: customer.id,
+        items: [
+          {
+            plan: plan.id,
+          },
+        ]
+      })
     }
 
     const createDonationBody: donationController.CreateDonationBody = {
