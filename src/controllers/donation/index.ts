@@ -21,6 +21,8 @@ export default class DonationController {
     let userId = 0
     let errorMessage = ''
     let stripeStatus
+    // Convert donation to cents
+    const donationAmount = amount * 100
 
     try {
       if (frequency === 'once') {
@@ -37,7 +39,7 @@ export default class DonationController {
         // create a charge 
         // Create a stripe charge for the order 
         let {status, failure_message} = await stripe.charges.create({
-          amount,
+          amount: donationAmount,
           currency: 'usd',
           description: 'Donation',
           source: source.id,
@@ -71,7 +73,7 @@ export default class DonationController {
 
         // create the plan according to how much they want to monthly donate 
         const plan = stripe.plans.create({
-          amount,
+          amount: donationAmount,
           interval: "month",
           product: {
             name: "Teacherfund donation"
@@ -99,7 +101,7 @@ export default class DonationController {
     const createDonationBody: donationController.CreateDonationBody = {
       userId,
       date: new Date(),
-      amount,
+      amount: donationAmount,
       frequency
     }
 
