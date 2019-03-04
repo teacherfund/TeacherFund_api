@@ -7,6 +7,7 @@ import {Donation} from '../../@types/donation'
 import {CreateAccountBody, UserAccount} from '../../@types/account'
 import {User} from '../../@types/user'
 const config = require('../../../config')
+console.log('config', config)
 const stripe = require('stripe')(config.stripe.secretKey)
 stripe.setApiVersion(config.stripe.apiVersion)
 
@@ -20,71 +21,78 @@ export default class DonationController {
     let userId = 0
     let errorMessage = ''
     let stripeStatus
-    if (frequency === 'once') {
-      const createUserBody: userController.CreateUserBody = {
-        email,
-        firstName: ctx.request.body.firstName,
-        lastName: ctx.request.body.lastName,
+
+    try {
+      if (frequency === 'once') {
+        const createUserBody: userController.CreateUserBody = {
+          email,
+          firstName: ctx.request.body.firstName,
+          lastName: ctx.request.body.lastName,
+        }
+        
+        // create a user
+        const user: User = await userController.createNewUser(createUserBody)
+        userId = user.id
+
+        // create a charge 
+        // Create a stripe charge for the order 
+        let {status, failure_message} = await stripe.charges.create({
+          amount,
+          currency: 'usd',
+          description: 'Donation',
+          source: source.id,
+          metadata: meta,
+          receipt_email: email
+        })
+        errorMessage = failure_message
+        stripeStatus = status
       }
-      
-      // create a user
-      const user: User = await userController.createNewUser(createUserBody)
-      userId = user.id
 
-      // create a charge 
-      // Create a stripe charge for the order 
-      let {status, failure_message} = await stripe.charges.create({
-        amount,
-        currency: 'usd',
-        description: 'Donation',
-        source: source.id,
-        metadata: meta,
-        receipt_email: email
-      })
-      errorMessage = failure_message
-      stripeStatus = status
-    }
+      if (frequency === 'month') {
+        // if recurring - create recurring payment and account with that email
 
-    if (frequency === 'month') {
-      // if recurring - create recurring payment and account with that email
+        // create an account in backend
+        const createAccountBody: CreateAccountBody = {
+          email,
+          firstName: ctx.request.body.firstName,
+          lastName: ctx.request.body.lastName,
+          role: 'donor'
+        }
+        
+        const account: UserAccount = await accountController.createNewAccount(createAccountBody)
+        userId = account.id
 
-      // create an account in backend
-      const createAccountBody: CreateAccountBody = {
-        email,
-        firstName: ctx.request.body.firstName,
-        lastName: ctx.request.body.lastName,
-        role: 'donor'
-      }
-      
-      const account: UserAccount = await accountController.createNewAccount(createAccountBody)
-      userId = account.id
+        // create a customer in stripe from this account info 
+        const customer = await stripe.customers.create({
+          email,
+          metadata: meta,
+          source: source.id
+        })
 
-      // create a customer in stripe from this account info 
-      const customer = await stripe.customers.create({
-        email,
-        metadata: meta,
-        source: source.id
-      })
-
-      // create the plan according to how much they want to monthly donate 
-      const plan = stripe.plans.create({
-        amount,
-        interval: "month",
-        product: {
-          name: "Teacherfund donation"
-        },
-        currency: "usd",
-      })
-
-      // create a subscription with the plan ID and the customer ID
-      await stripe.subscriptions.create({
-        customer: customer.id,
-        items: [
-          {
-            plan: plan.id,
+        // create the plan according to how much they want to monthly donate 
+        const plan = stripe.plans.create({
+          amount,
+          interval: "month",
+          product: {
+            name: "Teacherfund donation"
           },
-        ]
-      })
+          currency: "usd",
+        })
+
+        // create a subscription with the plan ID and the customer ID
+        await stripe.subscriptions.create({
+          customer: customer.id,
+          items: [
+            {
+              plan: plan.id,
+            },
+          ]
+        })
+      } 
+    } catch (e) {
+      ctx.status = 200
+      ctx.body = { ok: false, message: e.message }
+      return
     }
 
     // Create the donation in our backend 
