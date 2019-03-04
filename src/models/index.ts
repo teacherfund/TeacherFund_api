@@ -1,6 +1,7 @@
 const Sequelize = require('sequelize')
 const path = require('path')
 const fs = require('fs')
+require('dotenv').config()
 
 const host = (typeof process.env.MYSQL_HOST === 'undefined') ? 'localhost' : process.env.MYSQL_HOST
 const username = (typeof process.env.MYSQL_USERNAME === 'undefined') ? 'root' : process.env.MYSQL_USERNAME

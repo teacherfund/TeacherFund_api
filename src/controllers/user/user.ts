@@ -17,7 +17,7 @@ export interface UpdateUserBody {
 
 export const createNewUser = (body: CreateUserBody): Promise<User> => {
   try {
-    return sqlModels.User.create(body)
+    return sqlModels.User.findOrCreate({ where: { email: body.email }, defaults: body })
   } catch (e) {
     return Promise.reject(e)
   }

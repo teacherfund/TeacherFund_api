@@ -77,7 +77,7 @@ export default class DonationController {
       })
 
       // create a subscription with the plan ID and the customer ID
-      const subscription = await stripe.subscriptions.create({
+      await stripe.subscriptions.create({
         customer: customer.id,
         items: [
           {

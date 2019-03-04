@@ -3,6 +3,7 @@ import logger from 'koa-pino-logger'
 import helmet from 'koa-helmet'
 import bodyparser from 'koa-bodyparser'
 import enforceSsl from 'koa-sslify'
+const cors = require('@koa/cors');
 import router from './router'
 const mysqlModels = require('./models')
 
@@ -11,6 +12,7 @@ const setup = async () => {
     await mysqlModels.sequelize.sync({ force: true })
     const app = new Koa()
 
+    app.use(cors())
     app.use(logger())
     app.use(helmet())
 
@@ -25,7 +27,7 @@ const setup = async () => {
     app.use(router.allowedMethods())
     app.listen(process.env.PORT || 3000)
   } catch (e) {
-
+    console.log(e)
   }
 }
 
