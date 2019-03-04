@@ -6,7 +6,6 @@ import * as userController from '../user/user'
 import {Donation} from '../../@types/donation'
 import {CreateAccountBody, UserAccount} from '../../@types/account'
 import {User} from '../../@types/user'
-import user from '../../models/user';
 const config = require('../../../config')
 const stripe = require('stripe')(config.stripe.secretKey)
 stripe.setApiVersion(config.stripe.apiVersion)
@@ -47,15 +46,13 @@ export default class DonationController {
     }
 
     if (frequency === 'month') {
-      // if recurring - make them create an account? do we have passwords? talk to pete
-      // redirect to sign in page with amount of donation in URL so we dont need redux 
+      // if recurring - create recurring payment and account with that email
 
       // create an account in backend
       const createAccountBody: CreateAccountBody = {
         email,
         firstName: ctx.request.body.firstName,
         lastName: ctx.request.body.lastName,
-        password: ctx.request.body.password,
         role: 'donor'
       }
       
@@ -90,6 +87,7 @@ export default class DonationController {
       })
     }
 
+    // Create the donation in our backend 
     const createDonationBody: donationController.CreateDonationBody = {
       userId,
       date: new Date(),

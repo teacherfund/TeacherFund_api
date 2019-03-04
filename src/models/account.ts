@@ -16,7 +16,6 @@ export default (sequelize: any, DataTypes: any) => {
     },
     password: {
       type: DataTypes.STRING,
-      required: true
     },
     firstName: {
       type: DataTypes.STRING,

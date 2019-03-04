@@ -54,7 +54,7 @@ export const compareHashes = async (a: Buffer, b: Buffer): Promise<boolean> => {
 
 export const createNewAccount = async (body: CreateAccountBody): Promise<UserAccount> => {
   try {
-    return sqlModels.Account.create(body)
+    return sqlModels.Account.findOrCreate({ where: { email: body.email }, defaults: body })
   } catch (e) {
     return Promise.reject(e)
   }
