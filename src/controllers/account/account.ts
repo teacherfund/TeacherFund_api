@@ -1,11 +1,28 @@
 import sodium from 'sodium-native'
+import dynamo from 'dynamodb'
+dynamo.AWS.config.loadFromPath('../../awscredentials.json');
 import {CreateAccountBody, UserAccount, GetAccountBody} from '../../@types/account'
+import { join } from 'path';
 const sqlModels = require('../../models')
 
 interface AuthToken {
   selector: Buffer
   verifier: Buffer
 }
+
+const Account = dynamo.define('Account', {
+  hashKey : 'email',
+ 
+  // add the timestamp attributes (updatedAt, createdAt)
+  timestamps : true,
+ 
+  schema: {
+    email: Joi.string().email(),
+    selector: Joi.string(),
+    verifier: Joi.string(),
+    expiresAt: Joi.date(),
+  }
+})
 
 export const generateAuthToken = async (): Promise<AuthToken> => {
   // generate 16 random bytes as the selector
@@ -27,8 +44,8 @@ export const getVerifierHash = async (input: AuthToken): Promise<Buffer> => {
   return verifierHash
 }
 
-export const storeAuthToken = async (selector: Buffer, verifierHash: Buffer) => {
-  // Store selector in dynamo DB instance along with hash(verifier)
+export const storeAuthToken = async (email: string, role: string, selector: Buffer, verifierHash: Buffer) => {
+  // Store email and selector in dynamo DB instance along with hash(verifier)
 }
 
 export const splitSelectorVerifier = async (token: string): Promise<AuthToken> => {
