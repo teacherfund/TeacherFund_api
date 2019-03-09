@@ -17,5 +17,8 @@ router.post('/account/reset', controllers.account.resetPassword)
 /* Teacher routes */
 router.post('/donate', controllers.donation.createDonation)
 
+// subscribe
+router.post('/subscribe', controllers.user.createUser)
+
 
 export default router
