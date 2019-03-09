@@ -1,4 +1,5 @@
 import { BaseContext } from 'koa'
+import * as Strings from '../../helpers/strings'
 // import AccountUtilities from './account'
 
 export default class AccountController {
@@ -15,6 +16,7 @@ export default class AccountController {
     ctx.status = 200
     ctx.body = { ok: true }
   }
+
   public static async receiveReset (ctx: BaseContext) {
     const { token } = ctx.request.body
     ctx.assert(token, 400)
@@ -38,7 +40,24 @@ export default class AccountController {
     // if match and hasn't expired, reset the password
     return AccountController.resetPassword(ctx)
   }
+
   public static async resetPassword (ctx: BaseContext) {
+    ctx.status = 200
+    ctx.body = { ok: true }
+  }
+
+  // Endpoint to create hash 
+  public async register(ctx: BaseContext) {
+    const { email, role } = ctx.request.body
+    ctx.assert(email, 400, Strings.EmailIsRequired)
+    ctx.assert(role, 400, Strings.RoleIsRequired)
+
+    // Create activation token
+
+    // Store json blob of request in dynamo db with key of activation token
+
+    // Send magic link via sendgrid helper service
+
     ctx.status = 200
     ctx.body = { ok: true }
   }

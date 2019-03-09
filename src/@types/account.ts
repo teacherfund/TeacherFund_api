@@ -1,7 +1,6 @@
 export interface UserAccount {
   id: number,
   email: string,
-  password?: string,
   firstName: string,
   lastName: string,
   role: string,
@@ -14,4 +13,8 @@ export interface CreateAccountBody {
   lastName: string,
   role: string,
   meta?: any
+}
+
+export interface GetAccountBody {
+  email: string
 }
