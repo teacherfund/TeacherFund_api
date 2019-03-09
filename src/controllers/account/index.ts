@@ -46,8 +46,8 @@ export default class AccountController {
     ctx.body = { ok: true }
   }
 
-  // Endpoint to create hash 
-  public async register(ctx: BaseContext) {
+  // Endpoint to create hash to send in email to the user
+  public static async register (ctx: BaseContext) {
     const { email, role } = ctx.request.body
     ctx.assert(email, 400, Strings.EmailIsRequired)
     ctx.assert(role, 400, Strings.RoleIsRequired)
@@ -60,5 +60,10 @@ export default class AccountController {
 
     ctx.status = 200
     ctx.body = { ok: true }
+  }
+
+  // Endpoint to verify hash from email magic link and send back auth token
+  public static async verifyRegister (ctx: BaseContext) {
+
   }
 }
