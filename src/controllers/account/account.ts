@@ -1,5 +1,7 @@
 import sodium from 'sodium-native'
-import dynamo from 'dynamodb'
+const dynamo = require('dynamodb')
+const AWS = require('aws-sdk')
+const Joi = require('joi')
 dynamo.AWS.config.loadFromPath('../../awscredentials.json');
 import {CreateAccountBody, UserAccount, GetAccountBody} from '../../@types/account'
 import { join } from 'path';

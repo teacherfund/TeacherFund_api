@@ -84,6 +84,6 @@ export default class AccountController {
 
   // Endpoint to verify hash from email magic link and send back auth token
   public static async verifyRegister (ctx: BaseContext) {
-
+    
   }
 }

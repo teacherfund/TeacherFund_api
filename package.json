@@ -69,10 +69,11 @@
   },
   "dependencies": {
     "@koa/cors": "^2.2.3",
+    "aws-sdk": "^2.418.0",
     "bcrypt": "^3.0.3",
     "cors": "^2.8.5",
     "dotenv": "^6.2.0",
-    "dynamodb": "^1.2.0",
+    "joi": "^14.3.1",
     "koa": "^2.6.2",
     "koa-bodyparser": "^4.2.1",
     "koa-helmet": "^4.0.0",
