@@ -1,30 +1,15 @@
 import sodium from 'sodium-native'
-const dynamo = require('dynamodb')
 const AWS = require('aws-sdk')
-const Joi = require('joi')
+const dynamo = new AWS.DynamoDB()
 dynamo.AWS.config.loadFromPath('../../awscredentials.json');
 import {CreateAccountBody, UserAccount, GetAccountBody} from '../../@types/account'
-import { join } from 'path';
 const sqlModels = require('../../models')
+const TABLE_NAME = 'tokens'
 
 interface AuthToken {
   selector: Buffer
   verifier: Buffer
 }
-
-const Account = dynamo.define('Account', {
-  hashKey : 'email',
- 
-  // add the timestamp attributes (updatedAt, createdAt)
-  timestamps : true,
- 
-  schema: {
-    email: Joi.string().email(),
-    selector: Joi.string(),
-    verifier: Joi.string(),
-    expiresAt: Joi.date(),
-  }
-})
 
 export const generateAuthToken = async (): Promise<AuthToken> => {
   // generate 16 random bytes as the selector
