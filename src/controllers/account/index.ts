@@ -29,6 +29,7 @@ export default class AccountController {
   public static async requestReset (ctx: BaseContext) {
     const { email, role } = ctx.request.body
     ctx.assert(email, 400)
+    ctx.assert(role, 400)
     // TODO see if email address is in DB, if not: bail
     
     // If exists then push through generate and store token flow
@@ -84,6 +85,7 @@ export default class AccountController {
 
   // Endpoint to verify hash from email magic link and send back auth token
   public static async verifyRegister (ctx: BaseContext) {
-    
+    ctx.status = 200
+    ctx.body = { ok: true }
   }
 }
