@@ -43,12 +43,11 @@ export const storeAuthToken = async (email: string, role: string, selector: Buff
     }, 
     TableName: TABLE_NAME
   }
-  dynamo.putItem(params, (err: Error, data: {}) => {
-    if (err) console.log(err, err.stack)
-    else {
-      console.log(data)
-    }    
-  })
+  try {
+    await dynamo.putItem(params).promise()
+  } catch (e) {
+    console.error(e)
+  }
 }
 
 export const splitSelectorVerifier = async (token: string): Promise<AuthToken> => {
@@ -66,12 +65,11 @@ export const deleteSelector = async (authToken: AuthToken) => {
     }, 
     TableName: TABLE_NAME
   }
-  dynamo.deleteItem(params, (err: Error, _: any) => {
-    if (err) console.log(err, err.stack)
-    else {
-      console.log('deleted', authToken)
-    }
-  })
+  try {
+    await dynamo.deleteItem(params).promise()
+  } catch (e) {
+    console.error(e)
+  }
 }
 
 export const getStoredVerifierHash = async (authToken: AuthToken): Promise<Buffer> => {
@@ -82,14 +80,12 @@ export const getStoredVerifierHash = async (authToken: AuthToken): Promise<Buffe
     }, 
     TableName: TABLE_NAME
   }
-  dynamo.getItem(params, (err: Error, data: any) => {
-    if (err) console.log(err, err.stack)
-    else {
-      return Promise.resolve(data.verifierHash)
-    }
-    return
-  })
-  return Promise.reject('Could not find token')
+  try {
+    const token = await dynamo.getItem(params).promise()
+    return Promise.resolve(token.verifierHash)
+  } catch (e) {
+    return Promise.reject('Could not find token')
+  }
 }
 
 export const compareHashes = async (a: Buffer, b: Buffer): Promise<boolean> => {
