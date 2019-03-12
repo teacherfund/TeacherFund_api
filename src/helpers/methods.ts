@@ -10,16 +10,16 @@ export const getEmailParams = async (email: string, link: string, subject: strin
     Message: {
       Body: {
         Html: {
-          Charset: "UTF-8",
+          Charset: 'UTF-8',
           Data: htmlBody
         }
       },
       Subject: {
-        Charset: "UTF-8",
+        Charset: 'UTF-8',
         Data: subject
       }
     },
-    Source: "Joel from TeacherFund <joelwass@theteacherfund.com>"
+    Source: 'Joel from TeacherFund <joelwass@theteacherfund.com>'
   }
   return ses.sendEmail(emailParams).promise()
 }

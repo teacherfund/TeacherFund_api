@@ -26,21 +26,22 @@ export default class AccountController {
     return emailToken
   }
 
-  public static async requestReset (ctx: BaseContext) {
-    const { email, role } = ctx.request.body
-    ctx.assert(email, 400)
-    ctx.assert(role, 400)
-    // TODO see if email address is in DB, if not: bail
-    
-    // If exists then push through generate and store token flow
-    const emailToken = await this.generateAndStoreToken(ctx)
-    Methods.sendMagicLinkEmail(email, emailToken)
+  // Endpoint to create hash to send in email to the user on login
+  public static async login (ctx: BaseContext) {
+    const { email } = ctx.request.body
+    ctx.assert(email, 400, Strings.EmailIsRequired)
 
-    ctx.status = 200
-    ctx.body = { ok: true }
+    // Generate token, store it
+    const emailToken = await this.generateAndStoreToken(ctx)
+    try {
+      Methods.sendMagicLinkEmail(email, emailToken)
+      ctx.body = { ok: true }
+    } catch (e) {
+      ctx.body = { ok: false }
+    }
   }
 
-  // Endpoint to create hash to send in email to the user
+  // Endpoint to create hash to send in email to the user on register
   public static async register (ctx: BaseContext) {
     const { email, role } = ctx.request.body
     ctx.assert(email, 400, Strings.EmailIsRequired)
@@ -48,14 +49,16 @@ export default class AccountController {
 
     // Generate token, store it
     const emailToken = await this.generateAndStoreToken(ctx)
-    Methods.sendMagicLinkEmail(email, emailToken)
-
-    ctx.status = 200
-    ctx.body = { ok: true }
+    try {
+      Methods.sendMagicLinkEmail(email, emailToken)
+      ctx.body = { ok: true }
+    } catch (e) {
+      ctx.body = { ok: false }
+    }
   }
 
   // Endpoint to verify hash from email magic link and send back auth token
-  public static async verifyRegister (ctx: BaseContext) {
+  public static async verifyAuth (ctx: BaseContext) {
     // TODO look up hash sent in request in the db and email address
     // and make sure they match. if so then respond success and FE
     // will redirect to account page. if fail the FE will redirect to home page
