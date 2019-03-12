@@ -34,7 +34,7 @@ export default class AccountController {
     
     // If exists then push through generate and store token flow
     const emailToken = await this.generateAndStoreToken(ctx)
-    Methods.sendResetEmail(emailToken)
+    Methods.sendMagicLinkEmail(email, emailToken)
 
     ctx.status = 200
     ctx.body = { ok: true }
@@ -48,7 +48,7 @@ export default class AccountController {
 
     // Generate token, store it
     const emailToken = await this.generateAndStoreToken(ctx)
-    Methods.sendRegisterEmail(emailToken)
+    Methods.sendMagicLinkEmail(email, emailToken)
 
     ctx.status = 200
     ctx.body = { ok: true }
@@ -60,7 +60,7 @@ export default class AccountController {
     // and make sure they match. if so then respond success and FE
     // will redirect to account page. if fail the FE will redirect to home page
     // and show prompt
-    
+
     ctx.status = 200
     ctx.body = { ok: true }
   }

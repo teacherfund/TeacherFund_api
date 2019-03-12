@@ -1,6 +1,7 @@
 import sodium from 'sodium-native'
 const AWS = require('aws-sdk')
 const dynamo = new AWS.DynamoDB()
+const docClient = new AWS.DynamoDB.DocumentClient()
 dynamo.AWS.config.loadFromPath('../../awscredentials.json');
 import {CreateAccountBody, UserAccount, GetAccountBody} from '../../@types/account'
 const sqlModels = require('../../models')
@@ -34,17 +35,23 @@ export const getVerifierHash = async (input: AuthToken): Promise<Buffer> => {
 
 export const storeAuthToken = async (email: string, role: string, selector: Buffer, verifierHash: Buffer) => {
   // Store email and selector in dynamo DB instance along with hash(verifier)
-  var params = {
-    Item: {
-      email, 
-      role,
-      selector,
-      verifierHash
-    }, 
-    TableName: TABLE_NAME
+  const updateParams = {
+    Key: { email: { S: email } },
+    ExpressionAttributeNames: { 
+      '#R': 'role',
+      '#S': 'selector',
+      '#V': 'verifierHash'
+    },
+    ExpressionAttributeValues: { 
+      ':r': role,
+      ':s': selector,
+      ':v': verifierHash 
+    },
+    TableName: TABLE_NAME,
+    ReturnValues: 'ALL_NEW'
   }
   try {
-    await dynamo.putItem(params).promise()
+    await docClient.putItem(updateParams).promise()
   } catch (e) {
     console.error(e)
   }
@@ -60,13 +67,11 @@ export const splitSelectorVerifier = async (token: string): Promise<AuthToken> =
 export const deleteSelector = async (authToken: AuthToken) => {
   // Delete authToken.selector from dynamo db instance
   const params = {
-    Key: {
-     selector: authToken.selector
-    }, 
+    Key: { selector: { S: authToken.selector }}, 
     TableName: TABLE_NAME
   }
   try {
-    await dynamo.deleteItem(params).promise()
+    await docClient.deleteItem(params).promise()
   } catch (e) {
     console.error(e)
   }
@@ -75,13 +80,11 @@ export const deleteSelector = async (authToken: AuthToken) => {
 export const getStoredVerifierHash = async (authToken: AuthToken): Promise<Buffer> => {
   // Lookup resetToken.selector in DB and return stored verifier hash
   const params = {
-    Key: {
-     selector: authToken.selector
-    }, 
+    Key: { selector: { S: authToken.selector }}, 
     TableName: TABLE_NAME
   }
   try {
-    const token = await dynamo.getItem(params).promise()
+    const token = await docClient.getItem(params).promise()
     return Promise.resolve(token.verifierHash)
   } catch (e) {
     return Promise.reject('Could not find token')
