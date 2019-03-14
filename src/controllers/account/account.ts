@@ -33,7 +33,15 @@ export const getVerifierHash = async (input: AuthToken): Promise<Buffer> => {
   return verifierHash
 }
 
-export const storeAuthToken = async (email: string, role: string, selector: Buffer, verifierHash: Buffer) => {
+export const storeAuthToken = async (email: string, role: string, selector: Buffer, verifierHash: Buffer, longterm: boolean) => {
+  // expiration will be UTC time since epoch of when this token expires
+  let expiration: number
+  if (longterm) {
+
+  } else {
+
+  }
+  
   // Store email and selector in dynamo DB instance along with hash(verifier)
   const updateParams = {
     Key: { email: { S: email } },
@@ -77,7 +85,7 @@ export const deleteSelector = async (authToken: AuthToken) => {
   }
 }
 
-export const getStoredVerifierHash = async (authToken: AuthToken): Promise<Buffer> => {
+export const getStoredVerifierHash = async (authToken: AuthToken): Promise<any> => {
   // Lookup resetToken.selector in DB and return stored verifier hash
   const params = {
     Key: { selector: { S: authToken.selector }}, 
@@ -85,7 +93,7 @@ export const getStoredVerifierHash = async (authToken: AuthToken): Promise<Buffe
   }
   try {
     const token = await docClient.getItem(params).promise()
-    return Promise.resolve(token.verifierHash)
+    return Promise.resolve(token)
   } catch (e) {
     return Promise.reject('Could not find token')
   }

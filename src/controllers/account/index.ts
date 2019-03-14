@@ -6,6 +6,7 @@ import {
   storeAuthToken,
   getVerifierHash,
   getEmailAuthToken,
+  getStoredVerifierHash,
 } from './account'
 
 export default class AccountController {
@@ -59,12 +60,23 @@ export default class AccountController {
 
   // Endpoint to verify hash from email magic link and send back auth token
   public static async verifyAuth (ctx: BaseContext) {
-    // TODO look up hash sent in request in the db and email address
-    // and make sure they match. if so then respond success and FE
-    // will redirect to account page. if fail the FE will redirect to home page
-    // and show prompt
+    const { email, auth } = ctx.request.body
+    ctx.assert(email, 400, Strings.EmailIsRequired)
+    ctx.assert(auth, 400, Strings.AuthIsRequired)
 
-    ctx.status = 200
-    ctx.body = { ok: true }
+    // Look up hash sent in request in the db 
+    try {
+      const token = await getStoredVerifierHash(ctx.request.body.auth)
+      // If email matches the tokens email, they're authd and we should replace 
+      // token with long lasting token and respond with that token + an ok status
+      if (token.email === email) {
+        
+        ctx.status = 200
+        ctx.body = { ok: true }
+      }
+    } catch (e) {
+      ctx.status = 200
+      ctx.body = { ok: false }
+    }
   }
 }
