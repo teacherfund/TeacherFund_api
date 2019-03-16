@@ -7,6 +7,9 @@ import {CreateAccountBody, UserAccount, GetAccountBody} from '../../@types/accou
 const sqlModels = require('../../models')
 const TABLE_NAME = 'tokens'
 
+export const MILISECONDS_MONTH = 2.628e+9
+export const MILISECONDS_15_MINUTES = 900000
+
 interface AuthToken {
   selector: Buffer
   verifier: Buffer
@@ -36,24 +39,29 @@ export const getVerifierHash = async (input: AuthToken): Promise<Buffer> => {
 export const storeAuthToken = async (email: string, role: string, selector: Buffer, verifierHash: Buffer, longterm: boolean) => {
   // expiration will be UTC time since epoch of when this token expires
   let expiration: number
+  const now = new Date()
+  const utcNow = Date.UTC(now.getUTCFullYear(),now.getUTCMonth(), now.getUTCDate() , 
+      now.getUTCHours(), now.getUTCMinutes(), now.getUTCSeconds(), now.getUTCMilliseconds())
   if (longterm) {
-
+    expiration = utcNow + MILISECONDS_MONTH
   } else {
-
+    expiration = utcNow + MILISECONDS_15_MINUTES
   }
-  
+
   // Store email and selector in dynamo DB instance along with hash(verifier)
   const updateParams = {
     Key: { email: { S: email } },
     ExpressionAttributeNames: { 
       '#R': 'role',
       '#S': 'selector',
-      '#V': 'verifierHash'
+      '#V': 'verifierHash',
+      '#E': 'expiration'
     },
     ExpressionAttributeValues: { 
       ':r': role,
       ':s': selector,
-      ':v': verifierHash 
+      ':v': verifierHash,
+      ':e': expiration
     },
     TableName: TABLE_NAME,
     ReturnValues: 'ALL_NEW'
