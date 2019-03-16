@@ -1,8 +1,8 @@
 import sodium from 'sodium-native'
 const AWS = require('aws-sdk')
-const dynamo = new AWS.DynamoDB()
+const path = require('path')
+AWS.config.loadFromPath(path.join(__dirname, '../../../awscredentials.json'))
 const docClient = new AWS.DynamoDB.DocumentClient()
-dynamo.AWS.config.loadFromPath('../../awscredentials.json');
 import {CreateAccountBody, UserAccount, GetAccountBody} from '../../@types/account'
 const sqlModels = require('../../models')
 const TABLE_NAME = 'tokens'
@@ -14,7 +14,6 @@ interface AuthToken {
   selector: Buffer
   verifier: Buffer
 }
-console.log('here')
 
 export const generateAuthToken = async (): Promise<AuthToken> => {
   // generate 16 random bytes as the selector

@@ -11,7 +11,7 @@ import {
 
 export default class AccountController {
   // Abstract function to generate and store token and return for emailing
-  public static async generateAndStoreToken(ctx: BaseContext): Promise<string> {
+  public static async generateAndStoreToken(ctx: BaseContext, longLiveToken: boolean): Promise<string> {
     const { email, role } = ctx.request.body
     // Create activation token
     const token = await generateAuthToken()
@@ -20,7 +20,7 @@ export default class AccountController {
     const verifierHash = await getVerifierHash(token)
 
     // Store json blob of request in dynamo db with key of activation token
-    await storeAuthToken(email, role, token.selector, verifierHash)
+    await storeAuthToken(email, role, token.selector, verifierHash, longLiveToken)
 
     // Send magic link via sendgrid helper service
     const emailToken = await getEmailAuthToken(token)
@@ -33,7 +33,7 @@ export default class AccountController {
     ctx.assert(email, 400, Strings.EmailIsRequired)
 
     // Generate token, store it
-    const emailToken = await this.generateAndStoreToken(ctx)
+    const emailToken = await this.generateAndStoreToken(ctx, false)
     try {
       Methods.sendMagicLinkEmail(email, emailToken)
       ctx.body = { ok: true }
@@ -49,7 +49,7 @@ export default class AccountController {
     ctx.assert(role, 400, Strings.RoleIsRequired)
 
     // Generate token, store it
-    const emailToken = await this.generateAndStoreToken(ctx)
+    const emailToken = await this.generateAndStoreToken(ctx, false)
     try {
       Methods.sendMagicLinkEmail(email, emailToken)
       ctx.body = { ok: true }
@@ -71,8 +71,11 @@ export default class AccountController {
       // token with long lasting token and respond with that token + an ok status
       if (token.email === email) {
         
+        // Generate long live token, store it
+        const longLiveToken = await this.generateAndStoreToken(ctx, true)
+
         ctx.status = 200
-        ctx.body = { ok: true }
+        ctx.body = { ok: true, auth: longLiveToken }
       }
     } catch (e) {
       ctx.status = 200
