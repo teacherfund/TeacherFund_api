@@ -1,7 +1,9 @@
 import sodium from 'sodium-native'
+import { BaseContext } from 'koa'
 const AWS = require('aws-sdk')
 const path = require('path')
 AWS.config.loadFromPath(path.join(__dirname, '../../../awscredentials.json'))
+AWS.config.update({region:'us-east-1'})
 const docClient = new AWS.DynamoDB.DocumentClient()
 import {CreateAccountBody, UserAccount, GetAccountBody} from '../../@types/account'
 const sqlModels = require('../../models')
@@ -23,6 +25,23 @@ export const generateAuthToken = async (): Promise<AuthToken> => {
   const selector = random.slice(0, 16)
   const verifier = random.slice(16)
   return { selector, verifier }
+}
+
+// Abstract function to generate and store token and return for emailing
+export const generateAndStoreToken = async (ctx: BaseContext, longLiveToken: boolean): Promise<string> => {
+  const { email, role } = ctx.request.body
+  // Create activation token
+  const token = await generateAuthToken()
+
+  // Get verifier hash
+  const verifierHash = await getVerifierHash(token)
+
+  // Store json blob of request in dynamo db with key of activation token
+  await storeAuthToken(email, role, token.selector, verifierHash, longLiveToken)
+
+  // Send magic link via sendgrid helper service
+  const emailToken = await getEmailAuthToken(token)
+  return emailToken
 }
 
 export const getEmailAuthToken = async (input: AuthToken): Promise<string> => {
@@ -50,23 +69,30 @@ export const storeAuthToken = async (email: string, role: string, selector: Buff
   // Store email and selector in dynamo DB instance along with hash(verifier)
   const updateParams = {
     Key: { email: { S: email } },
-    ExpressionAttributeNames: { 
-      '#R': 'role',
-      '#S': 'selector',
-      '#V': 'verifierHash',
-      '#E': 'expiration'
+    Item: {
+      email,
+      role,
+      selector,
+      verifierHash,
+      expiration
     },
-    ExpressionAttributeValues: { 
-      ':r': role,
-      ':s': selector,
-      ':v': verifierHash,
-      ':e': expiration
-    },
+    // ExpressionAttributeNames: { 
+    //   '#R': 'role',
+    //   '#S': 'selector',
+    //   '#V': 'verifierHash',
+    //   '#E': 'expiration'
+    // },
+    // ExpressionAttributeValues: { 
+    //   ':r': role,
+    //   ':s': selector,
+    //   ':v': verifierHash,
+    //   ':e': expiration
+    // },
     TableName: TABLE_NAME,
-    ReturnValues: 'ALL_NEW'
+    ReturnValues: 'ALL_OLD'
   }
   try {
-    await docClient.putItem(updateParams).promise()
+    await docClient.put(updateParams).promise()
   } catch (e) {
     console.error(e)
   }
