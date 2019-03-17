@@ -8,7 +8,6 @@ if (!AWS.config.region) {
 }
 const ses = new AWS.SES()
 
-
 export const getEmailParams = async (email: string, link: string, subject: string, body: string) => {
   const htmlBody = body || `<div>click <a href="${link}">here</a> to login</div>`
   const emailParams = {

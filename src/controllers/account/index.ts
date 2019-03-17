@@ -15,12 +15,10 @@ export default class AccountController {
     // Generate token, store it
     const emailToken = await generateAndStoreToken(ctx, false)
     try {
-      Methods.sendMagicLinkEmail(email, emailToken)
+      await Methods.sendMagicLinkEmail(email, emailToken)
       ctx.body = { ok: true }
     } catch (e) {
-      console.log('HEREEEERRERER')
-      console.log(e)
-      ctx.body = { ok: false }
+      ctx.body = { ok: false, message: e.message || 'unknown error' }
     }
   }
 
@@ -33,10 +31,10 @@ export default class AccountController {
     // Generate token, store it
     const emailToken = await generateAndStoreToken(ctx, false)
     try {
-      Methods.sendMagicLinkEmail(email, emailToken)
+      await Methods.sendMagicLinkEmail(email, emailToken)
       ctx.body = { ok: true }
     } catch (e) {
-      ctx.body = { ok: false }
+      ctx.body = { ok: false, message: e.message || 'unkonwn error' }
     }
   }
 
