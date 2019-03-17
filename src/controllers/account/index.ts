@@ -18,6 +18,8 @@ export default class AccountController {
       Methods.sendMagicLinkEmail(email, emailToken)
       ctx.body = { ok: true }
     } catch (e) {
+      console.log('HEREEEERRERER')
+      console.log(e)
       ctx.body = { ok: false }
     }
   }

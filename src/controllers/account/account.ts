@@ -3,7 +3,11 @@ import { BaseContext } from 'koa'
 const AWS = require('aws-sdk')
 const path = require('path')
 AWS.config.loadFromPath(path.join(__dirname, '../../../awscredentials.json'))
-AWS.config.update({region:'us-east-1'})
+if (!AWS.config.region) {
+  AWS.config.update({
+    region: 'us-east-1'
+  })
+}
 const docClient = new AWS.DynamoDB.DocumentClient()
 import {CreateAccountBody, UserAccount, GetAccountBody} from '../../@types/account'
 const sqlModels = require('../../models')
@@ -67,7 +71,7 @@ export const storeAuthToken = async (email: string, role: string, selector: Buff
   }
 
   // Store email and selector in dynamo DB instance along with hash(verifier)
-  const updateParams = {
+  const createParams = {
     Key: { email: { S: email } },
     Item: {
       email,
@@ -76,24 +80,13 @@ export const storeAuthToken = async (email: string, role: string, selector: Buff
       verifierHash,
       expiration
     },
-    // ExpressionAttributeNames: { 
-    //   '#R': 'role',
-    //   '#S': 'selector',
-    //   '#V': 'verifierHash',
-    //   '#E': 'expiration'
-    // },
-    // ExpressionAttributeValues: { 
-    //   ':r': role,
-    //   ':s': selector,
-    //   ':v': verifierHash,
-    //   ':e': expiration
-    // },
     TableName: TABLE_NAME,
     ReturnValues: 'ALL_OLD'
   }
   try {
-    await docClient.put(updateParams).promise()
+    await docClient.put(createParams).promise()
   } catch (e) {
+    console.log('here')
     console.error(e)
   }
 }
