@@ -55,7 +55,8 @@ export default class AccountController {
         const longLiveToken = await generateAndStoreToken(ctx, true)
 
         ctx.status = 200
-        ctx.body = { ok: true, auth: longLiveToken }
+        ctx.cookies.set('tfauth', longLiveToken)
+        ctx.body = { ok: true }
       }
     } catch (e) {
       ctx.status = 200
