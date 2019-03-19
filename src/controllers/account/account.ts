@@ -72,7 +72,7 @@ export const storeAuthToken = async (email: string, role: string, selector: Buff
 
   // Store email and selector in dynamo DB instance along with hash(verifier)
   const createParams = {
-    Key: { email: { S: email } },
+    Key: { selector: { S: selector } },
     Item: {
       email,
       role,

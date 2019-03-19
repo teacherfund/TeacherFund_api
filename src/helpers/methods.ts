@@ -32,8 +32,8 @@ export const getEmailParams = async (email: string, link: string, subject: strin
 }
 
 export const sendMagicLinkEmail = (email: string, key: string): Promise<void> => {
-  const emailMagicLink = `https://theteacherfund.com/account/verify?token=${key}`
-  const subject = 'You\'re signed up!'
+  const emailMagicLink = `https://theteacherfund.com?auth=${key}&email=${email}`
+  const subject = 'You\'re in!'
   const body = `click <a href="${emailMagicLink}">here</a> to visit your account`
   return getEmailParams(email, key, subject, body)
 }
