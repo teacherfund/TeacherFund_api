@@ -61,13 +61,11 @@ export const getVerifierHash = async (input: AuthToken): Promise<Buffer> => {
 export const storeAuthToken = async (email: string, role: string, selector: Buffer, verifierHash: Buffer, longterm: boolean) => {
   // expiration will be UTC time since epoch of when this token expires
   let expiration: number
-  const now = new Date()
-  const utcNow = Date.UTC(now.getUTCFullYear(),now.getUTCMonth(), now.getUTCDate() , 
-      now.getUTCHours(), now.getUTCMinutes(), now.getUTCSeconds(), now.getUTCMilliseconds())
+  const now = Date.now()
   if (longterm) {
-    expiration = utcNow + MILISECONDS_MONTH
+    expiration = now + MILISECONDS_MONTH
   } else {
-    expiration = utcNow + MILISECONDS_15_MINUTES
+    expiration = now + MILISECONDS_15_MINUTES
   }
 
   // Store email and selector in dynamo DB instance along with hash(verifier)
@@ -86,7 +84,6 @@ export const storeAuthToken = async (email: string, role: string, selector: Buff
   try {
     await docClient.put(createParams).promise()
   } catch (e) {
-    console.log('here')
     console.error(e)
   }
 }

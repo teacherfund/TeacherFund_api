@@ -3,7 +3,8 @@ import * as Strings from '../../helpers/strings'
 import * as Methods from '../../helpers/methods'
 import {
   getStoredVerifierHash,
-  generateAndStoreToken
+  generateAndStoreToken,
+  deleteSelector
 } from './account'
 
 export default class AccountController {
@@ -47,10 +48,13 @@ export default class AccountController {
 
     // Look up hash sent in request in the db 
     try {
-      const token = await getStoredVerifierHash(ctx.request.body.auth)
+      const sessionInfo = await getStoredVerifierHash(ctx.request.body.auth)
+      // delete the short term session
+      await deleteSelector(sessionInfo)
+      
       // If email matches the tokens email, they're authd and we should replace 
       // token with long lasting token and respond with that token + an ok status
-      if (token.email === email) {
+      if (sessionInfo.email === email) {
         
         // Generate long live token, store it
         const longLiveToken = await generateAndStoreToken(ctx, true)
