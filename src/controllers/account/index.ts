@@ -31,6 +31,7 @@ export default class AccountController {
       ctx.body = { ok: true }
     } catch (e) {
       console.log(e)
+      ctx.status = 400
       ctx.body = { ok: false, message: e.message || 'unknown error' }
     }
     return
@@ -52,6 +53,7 @@ export default class AccountController {
       await Methods.sendMagicLinkEmail(email, emailToken)
       ctx.body = { ok: true }
     } catch (e) {
+      ctx.status = 400
       ctx.body = { ok: false, message: e.message || 'unkonwn error' }
     }
   }
@@ -102,7 +104,7 @@ export default class AccountController {
       }
     } catch (e) {
       console.log(e)
-      ctx.status = 200
+      ctx.status = 400
       ctx.body = { ok: false }
     }
     return
