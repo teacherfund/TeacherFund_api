@@ -7,12 +7,12 @@ const router = new Router()
 router.get('/alive', controllers.general.alive)
 
 /* Account routes */
-// request a reset token
-router.post('/account/reset/request', controllers.account.requestReset)
-// use a reset token
-router.post('/account/reset/receive', controllers.account.receiveReset)
-// reset a password
-router.post('/account/reset', controllers.account.resetPassword)
+// send magic link to email for login flow
+router.post('/account/login', controllers.account.login)
+// send magic link to user email for register flow
+router.post('/account/register', controllers.account.register)
+// receive magic link request to register or login redirect to home page auth'd
+router.post('/account/verify', controllers.account.verifyAuth)
 
 /* Teacher routes */
 router.post('/donate', controllers.donation.createDonation)

@@ -1,6 +1,6 @@
-import { UserAccount } from '../@types/account'
-const bcrypt = require('bcrypt')
-const helper = require('../helpers')
+// import { UserAccount } from '../@types/account'
+// const bcrypt = require('bcrypt')
+// const helper = require('../helpers')
 
 export default (sequelize: any, DataTypes: any) => {
   const Account = sequelize.define('Account', {
@@ -42,47 +42,49 @@ export default (sequelize: any, DataTypes: any) => {
   }, {
     freezeTableName: true,
     hooks: {
-      beforeCreate: (account: UserAccount) => {
-        return bcrypt.hash(account.password, 10)
-          .then((encryptedPassword: string) => {
-            account.password = encryptedPassword
-          })
-          .catch((err: any) => {
-            return Promise.reject(err)
-          })
-      },
-      beforeUpdate: (account: any) => {
-        if (!account.changed('password')) {
-          return
-        }
+      // UNCOMMENT IF USING PASSWORDS INSTEAD OF MAGIC LINKS
+      //
+      // beforeCreate: (account: UserAccount) => {
+      //   return bcrypt.hash(account.password, 10)
+      //     .then((encryptedPassword: string) => {
+      //       account.password = encryptedPassword
+      //     })
+      //     .catch((err: any) => {
+      //       return Promise.reject(err)
+      //     })
+      // },
+      // beforeUpdate: (account: any) => {
+      //   if (!account.changed('password')) {
+      //     return
+      //   }
 
-        return bcrypt.hash(account.password, 10)
-          .then((encryptedPassword: string) => {
-            account.password = encryptedPassword
-          })
-          .catch((err: any) => {
-            return Promise.reject(err)
-          })
-      }
+      //   return bcrypt.hash(account.password, 10)
+      //     .then((encryptedPassword: string) => {
+      //       account.password = encryptedPassword
+      //     })
+      //     .catch((err: any) => {
+      //       return Promise.reject(err)
+      //     })
+      // }
     }
   })
 
-  Account.authenticate = (body: any) => {
-    let account: any
-    return Account.findOne({ where: { email: body.email } })
-      .then((localAccount: UserAccount) => {
-        if (!localAccount) return Promise.reject(new helper.CustomError(helper.strings.InvalidUsernamePassword))
-        account = localAccount
-        return bcrypt.compare(body.password, account.password)
-      })
-      .then((result: any) => {
-        if (!result) return Promise.reject(new helper.CustomError(helper.strings.InvalidUsernamePassword))
-        return Promise.resolve(account)
-      })
-      .catch((err: any) => {
-        return Promise.reject(err)
-      })
-  }
+  // Account.authenticate = (body: any) => {
+  //   let account: any
+  //   return Account.findOne({ where: { email: body.email } })
+  //     .then((localAccount: UserAccount) => {
+  //       if (!localAccount) return Promise.reject(new helper.CustomError(helper.strings.InvalidUsernamePassword))
+  //       account = localAccount
+  //       return bcrypt.compare(body.password, account.password)
+  //     })
+  //     .then((result: any) => {
+  //       if (!result) return Promise.reject(new helper.CustomError(helper.strings.InvalidUsernamePassword))
+  //       return Promise.resolve(account)
+  //     })
+  //     .catch((err: any) => {
+  //       return Promise.reject(err)
+  //     })
+  // }
 
   return Account
 }

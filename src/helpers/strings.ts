@@ -17,3 +17,5 @@ export const StreetAddressIsRequired = 'Invalid params: street address is requir
 export const SchoolCodeIsRequired = 'Invalid params: school code is required'
 export const StateIsRequired = 'Invalid params: state is required'
 export const CityIsRequired = 'Invalid params: city is required'
+export const RoleIsRequired = 'Invalid params: role is required'
+export const AuthIsRequired = 'Invalid params: auth is required'
