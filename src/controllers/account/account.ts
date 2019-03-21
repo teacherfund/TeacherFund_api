@@ -32,7 +32,7 @@ export const generateAuthToken = async (): Promise<AuthToken> => {
 }
 
 // Abstract function to generate and store token and return for emailing
-export const generateAndStoreToken = async (ctx: BaseContext, longLiveToken: boolean): Promise<string> => {
+export const generateAndStoreToken = async (ctx: BaseContext, longLiveToken: boolean, registered: boolean, meta: {}): Promise<string> => {
   const { email, role } = ctx.request.body
   // Create activation token
   const token = await generateAuthToken()
@@ -41,7 +41,7 @@ export const generateAndStoreToken = async (ctx: BaseContext, longLiveToken: boo
   const verifierHash = await getVerifierHash(token)
 
   // Store json blob of request in dynamo db with key of activation token
-  await storeAuthToken(email, role, token.selector, verifierHash, longLiveToken)
+  await storeAuthToken(email, role, token.selector, verifierHash, longLiveToken, registered, meta)
 
   // Send magic link via sendgrid helper service
   const emailToken = await getEmailAuthToken(token)
@@ -58,7 +58,14 @@ export const getVerifierHash = async (input: AuthToken): Promise<Buffer> => {
   return verifierHash
 }
 
-export const storeAuthToken = async (email: string, role: string, selector: Buffer, verifierHash: Buffer, longterm: boolean) => {
+export const storeAuthToken = async (
+  email: string, 
+  role: string, selector: Buffer, 
+  verifierHash: Buffer, 
+  longterm: boolean,
+  registered: boolean,
+  meta: {}
+) => {
   // expiration will be UTC time since epoch of when this token expires
   let expiration: number
   const now = Date.now()
@@ -73,10 +80,12 @@ export const storeAuthToken = async (email: string, role: string, selector: Buff
     Key: { selector: { S: selector } },
     Item: {
       email,
+      registered,
       role,
       selector,
       verifierHash,
-      expiration
+      expiration,
+      ...meta
     },
     TableName: TABLE_NAME,
     ReturnValues: 'ALL_OLD'
@@ -108,7 +117,7 @@ export const deleteSelector = async (authToken: AuthToken) => {
   }
 }
 
-export const getStoredVerifierHash = async (authToken: AuthToken): Promise<any> => {
+export const getStoredSession = async (authToken: AuthToken): Promise<any> => {
   // Lookup resetToken.selector in DB and return stored verifier hash
   const params = {
     Key: { selector: { S: authToken.selector }}, 

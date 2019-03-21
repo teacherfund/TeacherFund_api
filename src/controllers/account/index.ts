@@ -2,9 +2,13 @@ import { BaseContext } from 'koa'
 import * as Strings from '../../helpers/strings'
 import * as Methods from '../../helpers/methods'
 import {
-  getStoredVerifierHash,
+  getStoredSession,
   generateAndStoreToken,
-  deleteSelector
+  splitSelectorVerifier,
+  deleteSelector,
+  getAccount,
+  createNewAccount,
+  compareHashes
 } from './account'
 
 export default class AccountController {
@@ -12,9 +16,16 @@ export default class AccountController {
   public static async login (ctx: BaseContext) {
     const { email } = ctx.request.body
     ctx.assert(email, 400, Strings.EmailIsRequired)
+    
+    // Lookup email in mysql db to make sure it's a registered user
+    const existingAccount = await getAccount({ email })
+    // If an existing account doesnt exist, the user was never registered
+    if (!existingAccount) {
+      return ctx.body = { ok: false, reason: 'no user exists' }
+    }
 
     // Generate token, store it
-    const emailToken = await generateAndStoreToken(ctx, false)
+    const emailToken = await generateAndStoreToken(ctx, false, true, {})
     try {
       await Methods.sendMagicLinkEmail(email, emailToken)
       ctx.body = { ok: true }
@@ -30,8 +41,12 @@ export default class AccountController {
     ctx.assert(email, 400, Strings.EmailIsRequired)
     ctx.assert(role, 400, Strings.RoleIsRequired)
 
+    const sessionMeta = { 
+      firstName: ctx.request.body.firstName, 
+      lastName: ctx.request.body.lastName 
+    }
     // Generate token, store it
-    const emailToken = await generateAndStoreToken(ctx, false)
+    const emailToken = await generateAndStoreToken(ctx, false, false, sessionMeta)
     try {
       await Methods.sendMagicLinkEmail(email, emailToken)
       ctx.body = { ok: true }
@@ -48,20 +63,41 @@ export default class AccountController {
 
     // Look up hash sent in request in the db 
     try {
-      const sessionInfo = await getStoredVerifierHash(ctx.request.body.auth)
+      const authToken = await splitSelectorVerifier(ctx.request.body.auth)
+      if (!authToken) return ctx.status = 401
+
+      const sessionInfo = await getStoredSession(authToken)
       // delete the short term session
       await deleteSelector(sessionInfo)
-      
-      // If email matches the tokens email, they're authd and we should replace 
-      // token with long lasting token and respond with that token + an ok status
-      if (sessionInfo.email === email) {
+
+      // If expiration has passed, return unauthorized
+      if (sessionInfo.expiration < Date.now()) return ctx.status = 401
+
+      // Grab the bytes of the verifier we retrieved out of dynamo
+      const sessionVerifier = Buffer.from(sessionInfo.verifier, 'base64')
+
+      // See if hashes match
+      const hashesMatch = await compareHashes(sessionVerifier, authToken.verifier)
+      if (!hashesMatch) return ctx.status = 401
+    
+      // If email matches the tokens email and the verifiers match, they're authd 
+      // and we should replace token with long lasting token and respond with 
+      // that token + an ok status
+      if (sessionInfo.email === email && hashesMatch) {
+
+        // If the user isn't created yet, create one
+        if (!sessionInfo.registered) {
+          await createNewAccount({ email, role: sessionInfo.role, ...sessionInfo.meta })
+        }
         
         // Generate long live token, store it
-        const longLiveToken = await generateAndStoreToken(ctx, true)
+        const longLiveToken = await generateAndStoreToken(ctx, true, true, sessionInfo.meta)
 
         ctx.status = 200
         ctx.cookies.set('tfauth', longLiveToken)
         ctx.body = { ok: true }
+      } else {
+        ctx.status = 401
       }
     } catch (e) {
       console.log(e)
