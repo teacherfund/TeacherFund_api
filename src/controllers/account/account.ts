@@ -124,8 +124,8 @@ export const getStoredSession = async (authToken: AuthToken): Promise<any> => {
     TableName: TABLE_NAME
   }
   try {
-    const token = await docClient.getItem(params).promise()
-    return Promise.resolve(token)
+    const session = await docClient.getItem(params).promise()
+    return Promise.resolve(session)
   } catch (e) {
     return Promise.reject('Could not find token')
   }
