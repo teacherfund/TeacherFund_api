@@ -33,6 +33,7 @@ export default class AccountController {
       console.log(e)
       ctx.body = { ok: false, message: e.message || 'unknown error' }
     }
+    return
   }
 
   // Endpoint to create hash to send in email to the user on register
@@ -104,5 +105,6 @@ export default class AccountController {
       ctx.status = 200
       ctx.body = { ok: false }
     }
+    return
   }
 }
