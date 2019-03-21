@@ -5,6 +5,7 @@ import {
   getStoredSession,
   generateAndStoreToken,
   splitSelectorVerifier,
+  getVerifierHash,
   deleteSelector,
   getAccount,
   createNewAccount,
@@ -20,12 +21,19 @@ export default class AccountController {
     // Lookup email in mysql db to make sure it's a registered user
     const existingAccount = await getAccount({ email })
     // If an existing account doesnt exist, the user was never registered
+    // return ok: true anyways to display agnostic message that 
+    // "If you have registered, you will receive an email shortly"
     if (!existingAccount) {
-      return ctx.body = { ok: false, reason: 'no user exists' }
+      return ctx.body = { ok: true }
     }
 
     // Generate token, store it
-    const emailToken = await generateAndStoreToken(ctx, false, true, {})
+    const emailToken = await generateAndStoreToken({
+      ctx, 
+      longLiveToken: false, 
+      registered: true, 
+      meta: {}
+    })
     try {
       await Methods.sendMagicLinkEmail(email, emailToken)
       ctx.body = { ok: true }
@@ -48,7 +56,12 @@ export default class AccountController {
       lastName: ctx.request.body.lastName 
     }
     // Generate token, store it
-    const emailToken = await generateAndStoreToken(ctx, false, false, sessionMeta)
+    const emailToken = await generateAndStoreToken({
+      ctx, 
+      longLiveToken: false, 
+      registered: false, 
+      meta: sessionMeta
+    })
     try {
       await Methods.sendMagicLinkEmail(email, emailToken)
       ctx.body = { ok: true }
@@ -71,22 +84,24 @@ export default class AccountController {
 
       const sessionInfo = await getStoredSession(authToken)
       // delete the short term session
-      await deleteSelector(sessionInfo)
+      deleteSelector(sessionInfo)
 
       // If expiration has passed, return unauthorized
       if (sessionInfo.expiration < Date.now()) return ctx.status = 401
 
       // Grab the bytes of the verifier we retrieved out of dynamo
       const sessionVerifier = Buffer.from(sessionInfo.verifier, 'base64')
+      // Get the auth token sent down verifier hash
+      const tokenVerifier = await getVerifierHash(authToken)
 
       // See if hashes match
-      const hashesMatch = await compareHashes(sessionVerifier, authToken.verifier)
+      const hashesMatch = await compareHashes(sessionVerifier, tokenVerifier)
       if (!hashesMatch) return ctx.status = 401
     
       // If email matches the tokens email and the verifiers match, they're authd 
       // and we should replace token with long lasting token and respond with 
       // that token + an ok status
-      if (sessionInfo.email === email && hashesMatch) {
+      if (sessionInfo.email === email) {
 
         // If the user isn't created yet, create one
         if (!sessionInfo.registered) {
@@ -94,7 +109,12 @@ export default class AccountController {
         }
         
         // Generate long live token, store it
-        const longLiveToken = await generateAndStoreToken(ctx, true, true, sessionInfo.meta)
+        const longLiveToken = await generateAndStoreToken({
+          ctx, 
+          longLiveToken: true, 
+          registered: true, 
+          meta: sessionInfo.meta
+        })
 
         ctx.status = 200
         ctx.cookies.set('tfauth', longLiveToken)

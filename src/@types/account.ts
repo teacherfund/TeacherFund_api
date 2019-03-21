@@ -18,3 +18,10 @@ export interface CreateAccountBody {
 export interface GetAccountBody {
   email: string
 }
+
+export interface GenerateTokenInfo {
+  ctx: any,
+  longLiveToken: boolean,
+  registered: boolean,
+  meta: {}
+}

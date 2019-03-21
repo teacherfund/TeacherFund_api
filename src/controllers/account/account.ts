@@ -1,5 +1,4 @@
 import sodium from 'sodium-native'
-import { BaseContext } from 'koa'
 const AWS = require('aws-sdk')
 const path = require('path')
 AWS.config.loadFromPath(path.join(__dirname, '../../../awscredentials.json'))
@@ -9,7 +8,7 @@ if (!AWS.config.region) {
   })
 }
 const docClient = new AWS.DynamoDB.DocumentClient()
-import {CreateAccountBody, UserAccount, GetAccountBody} from '../../@types/account'
+import {CreateAccountBody, UserAccount, GetAccountBody, GenerateTokenInfo} from '../../@types/account'
 const sqlModels = require('../../models')
 const TABLE_NAME = 'tokens'
 
@@ -32,8 +31,8 @@ export const generateAuthToken = async (): Promise<AuthToken> => {
 }
 
 // Abstract function to generate and store token and return for emailing
-export const generateAndStoreToken = async (ctx: BaseContext, longLiveToken: boolean, registered: boolean, meta: {}): Promise<string> => {
-  const { email, role } = ctx.request.body
+export const generateAndStoreToken = async (info: GenerateTokenInfo): Promise<string> => {
+  const { email, role } = info.ctx.request.body
   // Create activation token
   const token = await generateAuthToken()
 
@@ -41,7 +40,7 @@ export const generateAndStoreToken = async (ctx: BaseContext, longLiveToken: boo
   const verifierHash = await getVerifierHash(token)
 
   // Store json blob of request in dynamo db with key of activation token
-  await storeAuthToken(email, role, token.selector, verifierHash, longLiveToken, registered, meta)
+  await storeAuthToken(email, role, token.selector, verifierHash, info.longLiveToken, info.registered, info.meta)
 
   // Send magic link via sendgrid helper service
   const emailToken = await getEmailAuthToken(token)
