@@ -70,7 +70,6 @@
   "dependencies": {
     "@koa/cors": "^2.2.3",
     "aws-sdk": "^2.418.0",
-    "bcrypt": "^3.0.3",
     "cors": "^2.8.5",
     "dotenv": "^6.2.0",
     "koa": "^2.6.2",
