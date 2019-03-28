@@ -6,7 +6,9 @@
   "scripts": {
     "build": "tsc",
     "dev": "concurrently \"tsc -w\" \"nodemon dist | pino-pretty -c\"",
-    "start": "tsc && node dist",
+    "start": "npm run build && node dist",
+    "prestart": "npm run dist",
+    "dist": "sh ./scripts/dist.sh",
     "lint": "eslint src/**/*.ts --fix",
     "test": "nyc ava"
   },
