@@ -16,6 +16,7 @@ router.post('/account/verify', controllers.account.verifyAuth)
 
 /* Teacher routes */
 router.post('/donate', controllers.donation.createDonation)
+router.get('/donations', controllers.donation.getAllDonations)
 
 // subscribe
 router.post('/subscribe', controllers.user.createUser)

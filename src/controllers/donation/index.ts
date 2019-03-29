@@ -111,7 +111,7 @@ export default class DonationController {
     ctx.body = { ok: true, donation, status: stripeStatus, message: errorMessage }
   }
 
-  public async getDonation(ctx: BaseContext) {
+  public static async getDonation(ctx: BaseContext) {
     const { id } = ctx.request.body
     ctx.assert(id, 400, Strings.DonationIdIsRequired)
 
@@ -121,13 +121,13 @@ export default class DonationController {
     ctx.body = { ok: true, donation }
   }
 
-  public async getAllDonations(ctx: BaseContext) {
+  public static async getAllDonations(ctx: BaseContext) {
     const donations: Donation[] = await donationController.getAllDonations()
     ctx.status = 200
     ctx.body = { ok: true, donations }
   }
 
-  public async updateDonation(ctx: BaseContext) {
+  public static async updateDonation(ctx: BaseContext) {
     const { id } = ctx.request.body
     ctx.assert(id, 400, Strings.DonationIdIsRequired)
 
@@ -143,7 +143,7 @@ export default class DonationController {
     ctx.body = { ok: true, donation }
   }
 
-  public async deleteDonation(ctx: BaseContext) {
+  public static async deleteDonation(ctx: BaseContext) {
     const { id } = ctx.request.body
     ctx.assert(id, 400, Strings.DonationIdIsRequired)
 
