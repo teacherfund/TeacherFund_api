@@ -8,9 +8,6 @@ const username = (typeof process.env.MYSQL_USERNAME === 'undefined') ? 'root' : 
 const password = (typeof process.env.MYSQL_PASSWORD === 'undefined') ? '' : process.env.MYSQL_PASSWORD
 const database = (typeof process.env.MYSQL_DB === 'undefined') ? 'teacherfund' : process.env.MYSQL_DB
 
-console.log('process env')
-console.log(process.env)
-
 const connection = new Sequelize(database, username, password, {
   host,
   dialect: 'mysql',
