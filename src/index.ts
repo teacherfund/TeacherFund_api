@@ -9,7 +9,8 @@ const mysqlModels = require('./models')
 
 const setup = async () => {
   try {
-    await mysqlModels.sequelize.sync({ force: true })
+    await mysqlModels.sequelize.sync()
+    // await mysqlModels.sequelize.sync({ force: true })
     const app = new Koa()
 
     app.use(cors())
