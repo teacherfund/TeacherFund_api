@@ -37,7 +37,7 @@ export default (sequelize: any, DataTypes: any) => {
       defaultValue: DataTypes.NOW
     },
     meta: {
-      type: DataTypes.JSON
+      type: DataTypes.BLOB
     }
   }, {
     freezeTableName: true,

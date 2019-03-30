@@ -12,7 +12,7 @@ const connection = new Sequelize(database, username, password, {
   host,
   dialect: 'mysql',
   dialectOptions: {
-    ssl: false
+    ssl: process.env.NODE_ENV === 'production'
   },
   operatorsAliases: false,
   logging: process.env.NODE_ENV === 'production' ? false : console.log,
