@@ -14,6 +14,7 @@ console.log(process.env)
 const connection = new Sequelize(database, username, password, {
   host,
   dialect: 'mysql',
+  port: 3306,
   dialectOptions: {
     ssl: process.env.NODE_ENV === 'production'
   },
