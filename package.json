@@ -6,8 +6,8 @@
   "scripts": {
     "build": "tsc",
     "dev": "concurrently \"tsc -w\" \"nodemon dist | pino-pretty -c\"",
-    "start": "tsc && node dist/index.js",
-    "eb": "node_modules/.bin/tsc && node dist/index.js",
+    "start": "node dist/index.js",
+    "eb": "tsc && eb deploy",
     "lint": "eslint src/**/*.ts --fix",
     "test": "nyc ava"
   },
