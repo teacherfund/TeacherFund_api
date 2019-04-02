@@ -3,10 +3,10 @@ const path = require('path')
 const fs = require('fs')
 require('dotenv').config()
 
-const host = (typeof process.env.MYSQL_HOST === 'undefined') ? 'localhost' : process.env.MYSQL_HOST
-const username = (typeof process.env.MYSQL_USERNAME === 'undefined') ? 'root' : process.env.MYSQL_USERNAME
-const password = (typeof process.env.MYSQL_PASSWORD === 'undefined') ? '' : process.env.MYSQL_PASSWORD
-const database = (typeof process.env.MYSQL_DB === 'undefined') ? 'teacherfund' : process.env.MYSQL_DB
+const host = (typeof process.env.MYSQL_HOST === 'undefined' || process.env.NODE_ENV !== 'production') ? 'localhost' : process.env.MYSQL_HOST
+const username = (typeof process.env.MYSQL_USERNAME === 'undefined' || process.env.NODE_ENV !== 'production') ? 'root' : process.env.MYSQL_USERNAME
+const password = (typeof process.env.MYSQL_PASSWORD === 'undefined' || process.env.NODE_ENV !== 'production') ? '' : process.env.MYSQL_PASSWORD
+const database = (typeof process.env.MYSQL_DB === 'undefined' || process.env.NODE_ENV !== 'production') ? 'teacherfund' : process.env.MYSQL_DB
 
 const connection = new Sequelize(database, username, password, {
   host,

@@ -21,5 +21,10 @@ router.get('/donations', controllers.donation.getAllDonations)
 // subscribe
 router.post('/subscribe', controllers.user.createUser)
 
+// health
+router.get('/health', (ctx) => ctx.body = {ok: true})
+
+router.get('/', (ctx) => ctx.body = {ok: true})
+
 
 export default router
