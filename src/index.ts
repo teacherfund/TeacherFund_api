@@ -23,12 +23,11 @@ const setup = async () => {
       }))
     }
 
-    const port = process.env.NODE_ENV === 'production' ? 80 : 3000
-    console.log('PORT', port)
+    console.log('PORT', process.env.PORT)
     app.use(bodyparser())
     app.use(router.routes())
     app.use(router.allowedMethods())
-    app.listen(port)
+    app.listen(process.env.PORT || 3000)
   } catch (e) {
     console.log(e)
   }
