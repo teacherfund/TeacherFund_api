@@ -23,6 +23,7 @@ const setup = async () => {
       }))
     }
 
+    console.log('PORT', process.env.PORT)
     app.use(bodyparser())
     app.use(router.routes())
     app.use(router.allowedMethods())
