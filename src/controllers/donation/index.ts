@@ -50,7 +50,7 @@ export default class DonationController {
         stripeStatus = status
       }
 
-      if (frequency === 'month') {
+      if (frequency === 'monthly') {
         // if recurring - create recurring payment and account with that email
 
         // create an account in backend
@@ -72,7 +72,7 @@ export default class DonationController {
         })
 
         // create the plan according to how much they want to monthly donate 
-        const plan = stripe.plans.create({
+        const plan = await stripe.plans.create({
           amount: donationAmount,
           interval: "month",
           product: {
