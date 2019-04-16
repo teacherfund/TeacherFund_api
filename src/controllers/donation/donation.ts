@@ -14,6 +14,10 @@ export interface UpdateDonationBody {
   amount: number
 }
 
+export interface GetDonationBody {
+  email: string
+}
+
 export const createNewDonation = (body: CreateDonationBody): Promise<Donation> => {
   try {
     return sqlModels.Donation.create(body)
@@ -35,6 +39,14 @@ export const getAllDonations = (): Promise<Donation[]> => {
     return sqlModels.Donation.findAll()
   } catch (e) {
     return Promise.reject (e)
+  }
+}
+
+export const getDonationsForUser = (body: GetDonationBody): Promise<Donation[]> => {
+  try {
+    return sqlModels.Donation.find({ where: { email: body.email }})
+  } catch (e) {
+    return Promise.reject(e)
   }
 }
 

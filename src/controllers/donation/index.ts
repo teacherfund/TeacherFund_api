@@ -121,6 +121,26 @@ export default class DonationController {
     ctx.body = { ok: true, donation }
   }
 
+  public static async getDonationsForUser(ctx: BaseContext) {
+    const { email } = ctx.request.body
+    const getAccountBody = { email }
+    
+    try {
+      const account: UserAccount = await accountController.getAccount(getAccountBody)
+      const userId = account.id
+
+      ctx.assert(userId, 400, "User not found")
+
+      const donations: Donation[] = await donationController.getDonationsForUser({ email })
+
+      ctx.status = 200
+      ctx.body = { ok: true, donations }
+    } catch (e) {
+      ctx.status = 200
+      ctx.body = { ok: false, message: e}
+    }
+  }
+
   public static async getAllDonations(ctx: BaseContext) {
     const donations: Donation[] = await donationController.getAllDonations()
     ctx.status = 200

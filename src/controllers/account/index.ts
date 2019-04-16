@@ -20,6 +20,7 @@ export default class AccountController {
     
     // Lookup email in mysql db to make sure it's a registered user
     const existingAccount = await getAccount({ email })
+
     // If an existing account doesnt exist, the user was never registered
     // return ok: true anyways to display agnostic message that 
     // "If you have registered, you will receive an email shortly"
@@ -34,6 +35,7 @@ export default class AccountController {
       registered: true, 
       meta: {}
     })
+
     try {
       await Methods.sendMagicLinkEmail(email, emailToken)
       ctx.body = { ok: true }
