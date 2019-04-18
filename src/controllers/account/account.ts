@@ -11,6 +11,7 @@ const docClient = new AWS.DynamoDB.DocumentClient()
 import {CreateAccountBody, UserAccount, GetAccountBody, GenerateTokenInfo} from '../../@types/account'
 const sqlModels = require('../../models')
 const TABLE_NAME = 'tokens'
+const INDEX_NAME = 'selector-index'
 
 export const MILISECONDS_MONTH = 2.628e+9
 export const MILISECONDS_15_MINUTES = 900000
@@ -48,7 +49,7 @@ export const generateAndStoreToken = async (info: GenerateTokenInfo): Promise<st
 }
 
 export const getEmailAuthToken = async (input: AuthToken): Promise<string> => {
-  return Buffer.concat([input.selector, input.verifier]).toString('base64')
+  return Buffer.concat([input.selector, input.verifier]).toString('hex')
 }
 
 export const getVerifierHash = async (input: AuthToken): Promise<Buffer> => {
@@ -76,13 +77,12 @@ export const storeAuthToken = async (
 
   // Store email and selector in dynamo DB instance along with hash(verifier)
   const createParams = {
-    Key: { selector: { S: selector } },
     Item: {
       email,
       registered,
       role,
-      selector,
-      verifierHash,
+      selector: selector.toString('hex'),
+      verifierHash: verifierHash.toString('hex'),
       expiration,
       ...meta
     },
@@ -97,20 +97,20 @@ export const storeAuthToken = async (
 }
 
 export const splitSelectorVerifier = async (token: string): Promise<AuthToken> => {
-  const tokenBuf = Buffer.from(token, 'base64')
+  const tokenBuf = Buffer.from(token, 'hex')
   const selector = tokenBuf.slice(0, 16)
   const verifier = tokenBuf.slice(16)
   return { selector, verifier }
 }
 
-export const deleteSelector = async (authToken: AuthToken) => {
+export const deleteSelector = async (sessionInfo: any) => {
   // Delete authToken.selector from dynamo db instance
   const params = {
-    Key: { selector: { S: authToken.selector }}, 
+    Key: { email: sessionInfo.email },
     TableName: TABLE_NAME
   }
   try {
-    await docClient.deleteItem(params).promise()
+    await docClient.delete(params).promise()
   } catch (e) {
     console.error(e)
   }
@@ -118,14 +118,21 @@ export const deleteSelector = async (authToken: AuthToken) => {
 
 export const getStoredSession = async (authToken: AuthToken): Promise<any> => {
   // Lookup resetToken.selector in DB and return stored verifier hash
+  const hexSelector = authToken.selector.toString('hex')
   const params = {
-    Key: { selector: { S: authToken.selector }}, 
+    KeyConditionExpression: 'selector = :selector',
+    ExpressionAttributeValues: { ':selector': hexSelector },
+    IndexName: INDEX_NAME,
     TableName: TABLE_NAME
   }
   try {
-    const session = await docClient.getItem(params).promise()
-    return Promise.resolve(session)
+    const result = await docClient.query(params).promise()
+    if (!result || !result.Count) {
+      throw new Error('Empty result set')
+    }
+    return Promise.resolve(result.Items.pop())
   } catch (e) {
+    console.error(e)
     return Promise.reject('Could not find token')
   }
 }
