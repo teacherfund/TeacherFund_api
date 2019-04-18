@@ -81,7 +81,7 @@ export default class AccountController {
 
     // Look up hash sent in request in the db 
     try {
-      const authToken = await splitSelectorVerifier(ctx.request.body.auth)
+      const authToken = await splitSelectorVerifier(auth)
       if (!authToken) return ctx.status = 401
 
       const sessionInfo = await getStoredSession(authToken)
@@ -92,7 +92,7 @@ export default class AccountController {
       if (sessionInfo.expiration < Date.now()) return ctx.status = 401
 
       // Grab the bytes of the verifier we retrieved out of dynamo
-      const sessionVerifier = Buffer.from(sessionInfo.verifier, 'base64')
+      const sessionVerifier = Buffer.from(sessionInfo.verifierHash, 'hex')
       // Get the auth token sent down verifier hash
       const tokenVerifier = await getVerifierHash(authToken)
 
@@ -109,10 +109,14 @@ export default class AccountController {
         if (!sessionInfo.registered) {
           await createNewAccount({ email, role: sessionInfo.role, ...sessionInfo.meta })
         }
+
+        const enrichedCtx = Object.assign({}, ctx, {
+          role: sessionInfo.role
+        })
         
         // Generate long live token, store it
         const longLiveToken = await generateAndStoreToken({
-          ctx, 
+          ctx: enrichedCtx,
           longLiveToken: true, 
           registered: true, 
           meta: sessionInfo.meta
