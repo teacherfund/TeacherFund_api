@@ -14,7 +14,7 @@ router.post('/account/register', controllers.account.register)
 // receive magic link request to register or login redirect to home page auth'd
 router.post('/account/verify', controllers.account.verifyAuth)
 // get all donations for an account
-router.get('/account/donations', controllers.donation.getDonationsForUser)
+router.post('/account/donations', controllers.donation.getDonationsForUser)
 
 /* Teacher routes */
 router.post('/donate', controllers.donation.createDonation)
