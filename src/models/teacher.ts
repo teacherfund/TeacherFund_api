@@ -31,8 +31,5 @@ export default (sequelize: any, DataTypes: any) => {
   }, {
     freezeTableName: true
   })
-  Teacher.associate = (db: any) => {
-    Teacher.hasOne(db.School, { foreignKey: 'school_id' })
-  }
   return Teacher
 }
