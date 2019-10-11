@@ -32,6 +32,9 @@ export default (sequelize: any, DataTypes: any) => {
   }, {
     freezeTableName: true
   })
-
+  User.associate = (db: any) => {
+    User.hasMany(db.Donation)
+    User.hasOne(db.Account)
+  }
   return User
 }

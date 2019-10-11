@@ -30,9 +30,7 @@ export default (sequelize: any, DataTypes: any) => {
     freezeTableName: true
   })
   Payout.associate = (db: any) => {
-    // link to teacher account and school
-    Payout.hasOne(db.Account, { foreignKey: 'account_id' })
-    Payout.hasOne(db.School, { foreignKey: 'school_id' })
+    Payout.hasMany(db.Picture)
   }
   return Payout
 }

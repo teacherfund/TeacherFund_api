@@ -2,7 +2,7 @@ export interface Donation {
   id: number,
   amount: number,
   frequency: string,
-  userId: number,
+  UserId: number,
   meta: any
 }
 

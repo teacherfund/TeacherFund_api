@@ -34,5 +34,9 @@ export default (sequelize: any, DataTypes: any) => {
   }, {
     freezeTableName: true
   })
+  School.associate = (db: any) => {
+    School.hasMany(db.Teacher)
+    School.hasMany(db.Payout)
+  }
   return School
 }

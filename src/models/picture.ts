@@ -19,9 +19,5 @@ export default (sequelize: any, DataTypes: any) => {
   }, {
     freezeTableName: true
   })
-  Picture.associate = (db: any) => {
-    // link to payout
-    Picture.hasOne(db.Payout, { foreignKey: 'payout_id' })
-  }
   return Picture
 }

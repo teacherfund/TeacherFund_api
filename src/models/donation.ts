@@ -29,8 +29,5 @@ export default (sequelize: any, DataTypes: any) => {
   }, {
     freezeTableName: true
   })
-  Donation.associate = (db: any) => {
-    Donation.hasOne(db.User, { foreignKey: 'user_id' })
-  }
   return Donation
 }
