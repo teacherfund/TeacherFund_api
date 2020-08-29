@@ -81,7 +81,7 @@
     "koa-sslify": "^2.2.0",
     "mysql2": "^1.6.5",
     "sequelize": "^5.3.0",
-    "sodium-native": "^2.2.3",
+    "sodium-native": "^2.4.9",
     "stripe": "^6.23.1"
   }
 }

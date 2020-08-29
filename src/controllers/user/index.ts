@@ -1,10 +1,10 @@
-import {BaseContext} from 'koa'
+import {Context} from 'koa'
 import * as Strings from '../../helpers/strings'
 import * as userController from './user'
 import {User} from '../../@types/user'
 
 export default class UserController {
-  public static async createUser(ctx: BaseContext) {
+  public static async createUser(ctx: Context) {
     const { email } = ctx.request.body
     ctx.assert(email, 400, Strings.EmailIsRequired)
 
@@ -21,7 +21,7 @@ export default class UserController {
     ctx.body = { ok: true, user }
   }
 
-  public async getUser(ctx: BaseContext) {
+  public async getUser(ctx: Context) {
     const { id } = ctx.request.body
     ctx.assert(id, 400, Strings.UserIdIsRequired)
 
@@ -31,13 +31,13 @@ export default class UserController {
     ctx.body = { ok: true, user }
   }
 
-  public async getAllUsers(ctx: BaseContext) {
+  public async getAllUsers(ctx: Context) {
     const users: User[] = await userController.getAllUsers()
     ctx.status = 200
     ctx.body = { ok: true, users }
   }
 
-  public async updateUser(ctx: BaseContext) {
+  public async updateUser(ctx: Context) {
     const { id } = ctx.request.body
     ctx.assert(id, 400, Strings.UserIdIsRequired)
 
@@ -54,7 +54,7 @@ export default class UserController {
     ctx.body = { ok: true, user }
   }
 
-  public async deleteUser(ctx: BaseContext) {
+  public async deleteUser(ctx: Context) {
     const { id } = ctx.request.body
     ctx.assert(id, 400, Strings.UserIdIsRequired)
 

@@ -1,4 +1,4 @@
-import { BaseContext } from 'koa'
+import { Context } from 'koa'
 import * as Strings from '../../helpers/strings'
 import * as Methods from '../../helpers/methods'
 import {
@@ -14,7 +14,7 @@ import {
 
 export default class AccountController {
   // Endpoint to create hash to send in email to the user on login
-  public static async login (ctx: BaseContext) {
+  public static async login (ctx: Context) {
     const { email } = ctx.request.body
     ctx.assert(email, 400, Strings.EmailIsRequired)
     
@@ -48,7 +48,7 @@ export default class AccountController {
   }
 
   // Endpoint to create hash to send in email to the user on register
-  public static async register (ctx: BaseContext) {
+  public static async register (ctx: Context) {
     const { email, role } = ctx.request.body
     ctx.assert(email, 400, Strings.EmailIsRequired)
     ctx.assert(role, 400, Strings.RoleIsRequired)
@@ -74,7 +74,7 @@ export default class AccountController {
   }
 
   // Endpoint to verify hash from email magic link and send back auth token
-  public static async verifyAuth (ctx: BaseContext) {
+  public static async verifyAuth (ctx: Context) {
     const { email, auth } = ctx.request.body
     ctx.assert(email, 400, Strings.EmailIsRequired)
     ctx.assert(auth, 400, Strings.AuthIsRequired)

@@ -1,10 +1,10 @@
-import {BaseContext} from 'koa'
+import {Context} from 'koa'
 import * as Strings from '../../helpers/strings'
 import * as payoutController from './payout'
 import {Payout} from '../../@types/payout'
 
 export default class PayoutController {
-  public async createPayout(ctx: BaseContext) {
+  public async createPayout(ctx: Context) {
     const { teacherId, amount, description, location } = ctx.request.body
     ctx.assert(teacherId, 400, Strings.TeacherIdIsRequired)
     ctx.assert(amount, 400, Strings.AmountIsRequired)
@@ -25,7 +25,7 @@ export default class PayoutController {
     ctx.body = { ok: true, payout }
   }
 
-  public async getPayout(ctx: BaseContext) {
+  public async getPayout(ctx: Context) {
     const { id } = ctx.request.body
     ctx.assert(id, 400, Strings.PayoutIdIsRequired)
 
@@ -35,13 +35,13 @@ export default class PayoutController {
     ctx.body = { ok: true, payout }
   }
 
-  public async getAllPayouts(ctx: BaseContext) {
+  public async getAllPayouts(ctx: Context) {
     const payouts: Payout[] = await payoutController.getAllPayouts()
     ctx.status = 200
     ctx.body = { ok: true, payouts }
   }
 
-  public async updatePayout(ctx: BaseContext) {
+  public async updatePayout(ctx: Context) {
     const { id } = ctx.request.body
     ctx.assert(id, 400, Strings.PayoutIdIsRequired)
 

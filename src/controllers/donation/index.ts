@@ -1,4 +1,4 @@
-import {BaseContext} from 'koa'
+import {Context} from 'koa'
 import * as Strings from '../../helpers/strings'
 import * as donationController from './donation'
 import * as accountController from '../account/account'
@@ -12,7 +12,7 @@ const stripe = require('stripe')(config.stripe.secretKey)
 stripe.setApiVersion(config.stripe.apiVersion)
 
 export default class DonationController {
-  public static async createDonation(ctx: BaseContext) {
+  public static async createDonation(ctx: Context) {
     const { email, amount, frequency, source, meta } = ctx.request.body
     ctx.assert(amount, 400, Strings.AmountIsRequired)
     ctx.assert(frequency, 400, Strings.FrequencyIsRequired)
@@ -111,7 +111,7 @@ export default class DonationController {
     ctx.body = { ok: true, donation, status: stripeStatus, message: errorMessage }
   }
 
-  public static async getDonation(ctx: BaseContext) {
+  public static async getDonation(ctx: Context) {
     const { id } = ctx.request.body
     ctx.assert(id, 400, Strings.DonationIdIsRequired)
 
@@ -121,7 +121,7 @@ export default class DonationController {
     ctx.body = { ok: true, donation }
   }
 
-  public static async getDonationsForUser(ctx: BaseContext) {
+  public static async getDonationsForUser(ctx: Context) {
     const { email } = ctx.request.body
     const getAccountBody = { email }
     
@@ -141,13 +141,13 @@ export default class DonationController {
     }
   }
 
-  public static async getAllDonations(ctx: BaseContext) {
+  public static async getAllDonations(ctx: Context) {
     const donations: Donation[] = await donationController.getAllDonations()
     ctx.status = 200
     ctx.body = { ok: true, donations }
   }
 
-  public static async updateDonation(ctx: BaseContext) {
+  public static async updateDonation(ctx: Context) {
     const { id } = ctx.request.body
     ctx.assert(id, 400, Strings.DonationIdIsRequired)
 
@@ -163,7 +163,7 @@ export default class DonationController {
     ctx.body = { ok: true, donation }
   }
 
-  public static async deleteDonation(ctx: BaseContext) {
+  public static async deleteDonation(ctx: Context) {
     const { id } = ctx.request.body
     ctx.assert(id, 400, Strings.DonationIdIsRequired)
 

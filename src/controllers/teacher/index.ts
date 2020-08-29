@@ -1,10 +1,10 @@
-import {BaseContext} from 'koa'
+import {Context} from 'koa'
 import * as Strings from '../../helpers/strings'
 import * as teacherController from './teacher'
 import {Teacher} from '../../@types/teacher'
 
 export default class TeacherController {
-  public async createTeacher(ctx: BaseContext) {
+  public async createTeacher(ctx: Context) {
     const { email, firstName, lastName } = ctx.request.body
     ctx.assert(email, 400, Strings.EmailIsRequired)
     ctx.assert(firstName, 400, Strings.FirstNameIsRequired)
@@ -22,7 +22,7 @@ export default class TeacherController {
     ctx.body = { ok: true, teacher }
   }
 
-  public async getTeacher(ctx: BaseContext) {
+  public async getTeacher(ctx: Context) {
     const { email } = ctx.request.body
     ctx.assert(email, 400, Strings.EmailIsRequired)
 
@@ -32,13 +32,13 @@ export default class TeacherController {
     ctx.body = { ok: true, teacher }
   }
 
-  public async getAllTeachers(ctx: BaseContext) {
+  public async getAllTeachers(ctx: Context) {
     const teachers: Teacher[] = await teacherController.getAllTeachers()
     ctx.status = 200
     ctx.body = { ok: true, teachers }
   }
 
-  public async updateTeacher(ctx: BaseContext) {
+  public async updateTeacher(ctx: Context) {
     const { email } = ctx.request.body
     ctx.assert(email, 400, Strings.EmailIsRequired)
 
@@ -55,7 +55,7 @@ export default class TeacherController {
     ctx.body = { ok: true, teacher }
   }
 
-  public async deleteTeacher(ctx: BaseContext) {
+  public async deleteTeacher(ctx: Context) {
     const { email } = ctx.request.body
     ctx.assert(email, 400, Strings.EmailIsRequired)
 

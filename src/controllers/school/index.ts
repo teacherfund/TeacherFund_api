@@ -1,10 +1,10 @@
-import {BaseContext} from 'koa'
+import {Context} from 'koa'
 import * as Strings from '../../helpers/strings'
 import * as schoolController from './school'
 import {School} from '../../@types/school'
 
 export default class SchoolController {
-  public async createSchool(ctx: BaseContext) {
+  public async createSchool(ctx: Context) {
     const { streetAddress, city, state, zip, schoolCode } = ctx.request.body
     ctx.assert(streetAddress, 400, Strings.StreetAddressIsRequired)
     ctx.assert(city, 400, Strings.CityIsRequired)
@@ -26,7 +26,7 @@ export default class SchoolController {
     ctx.body = { ok: true, school }
   }
 
-  public async getSchool(ctx: BaseContext) {
+  public async getSchool(ctx: Context) {
     const { id } = ctx.request.body
     ctx.assert(id, 400, Strings.SchoolIdIsRequired)
 
@@ -36,13 +36,13 @@ export default class SchoolController {
     ctx.body = { ok: true, school }
   }
 
-  public async getAllSchools(ctx: BaseContext) {
+  public async getAllSchools(ctx: Context) {
     const schools: School[] = await schoolController.getAllSchools()
     ctx.status = 200
     ctx.body = { ok: true, schools }
   }
 
-  public async updateSchool(ctx: BaseContext) {
+  public async updateSchool(ctx: Context) {
     const { id } = ctx.request.body
     ctx.assert(id, 400, Strings.SchoolIdIsRequired)
 
@@ -57,7 +57,7 @@ export default class SchoolController {
     ctx.body = { ok: true, school }
   }
 
-  public async deleteSchool(ctx: BaseContext) {
+  public async deleteSchool(ctx: Context) {
     const { id } = ctx.request.body
     ctx.assert(id, 400, Strings.SchoolIdIsRequired)
 
