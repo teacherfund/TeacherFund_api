@@ -24,6 +24,7 @@ router.get('/donations', controllers.donation.getAllDonations)
 router.post('/subscribe', controllers.user.createUser)
 
 // TODO need GET /account/logout GET /account/resume DELETE /donation
+// TODO also need middleware for auth
 
 // health
 router.get('/health', (ctx) => ctx.body = {ok: true})
