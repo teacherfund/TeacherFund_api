@@ -23,6 +23,8 @@ router.get('/donations', controllers.donation.getAllDonations)
 // subscribe
 router.post('/subscribe', controllers.user.createUser)
 
+// TODO need GET /account/logout GET /account/resume DELETE /donation
+
 // health
 router.get('/health', (ctx) => ctx.body = {ok: true})
 
